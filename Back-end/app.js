@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const materialRoutes = require("./routes/materialRoutes");
 const lessonRoutes = require("./routes/lessons");
+const progressRoutes = require("./routes/progressRoutes");
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use(async (_req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", materialRoutes);
 app.use("/api/lessons", lessonRoutes);
+app.use("/api/progress", progressRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

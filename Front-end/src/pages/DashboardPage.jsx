@@ -17,7 +17,8 @@ const subjectOptions = [
 export default function Dashboard() {
   const { user } = useAuth();
 
-  const [materials, setMaterials] = useState([]);
+  const [progressItems, setProgressItems] = useState([]);
+  const [updatingMaterialId, setUpdatingMaterialId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
@@ -28,8 +29,17 @@ export default function Dashboard() {
       setIsLoading(true);
       setError("");
 
-      const response = await api.get("/courses");
-      setMaterials(Array.isArray(response.data) ? response.data : []);
+      const [materialsResponse, progressResponse] = await Promise.all([
+        api.get("/courses"),
+        api.get("/progress"),
+      ]);
+
+      setMaterials(
+        Array.isArray(materialsResponse.data) ? materialsResponse.data : [],
+      );
+      setProgressItems(
+        Array.isArray(progressResponse.data) ? progressResponse.data : [],
+      );
     } catch (err) {
       setError(
         err?.response?.data?.msg ||
@@ -45,28 +55,40 @@ export default function Dashboard() {
     fetchMaterials();
   }, []);
 
-  const filteredMaterials = useMemo(() => {
-    const keyword = searchTerm.toLowerCase().trim();
+  const completedMaterialIds = useMemo(() => {
+    return new Set(
+      progressItems
+        .filter((item) => item.status === "completed")
+        .map((item) => item.material?._id || item.material),
+    );
+  }, [progressItems]);
 
-    return materials.filter((material) => {
-      const title = material?.title?.toLowerCase() || "";
-      const description = material?.description?.toLowerCase() || "";
-      const subject = material?.subject || "";
+  const completedCount = completedMaterialIds.size;
 
-      const matchesSearch =
-        !keyword || title.includes(keyword) || description.includes(keyword);
+  const handleToggleComplete = async (materialId) => {
+    try {
+      setUpdatingMaterialId(materialId);
 
-      const matchesSubject =
-        selectedSubject === "all" || subject === selectedSubject;
+      if (completedMaterialIds.has(materialId)) {
+        await api.delete(`/progress/${materialId}`);
+      } else {
+        await api.post(`/progress/${materialId}/complete`);
+      }
 
-      return matchesSearch && matchesSubject;
-    });
-  }, [materials, searchTerm, selectedSubject]);
-
-  const totalDuration = filteredMaterials.reduce(
-    (total, material) => total + Number(material?.duration || 0),
-    0,
-  );
+      const progressResponse = await api.get("/progress");
+      setProgressItems(
+        Array.isArray(progressResponse.data) ? progressResponse.data : [],
+      );
+    } catch (err) {
+      setError(
+        err?.response?.data?.msg ||
+          err?.response?.data?.message ||
+          "Failed to update learning progress.",
+      );
+    } finally {
+      setUpdatingMaterialId(null);
+    }
+  };
 
   return (
     <>
@@ -94,8 +116,8 @@ export default function Dashboard() {
               <span>Total Materials</span>
             </div>
             <div>
-              <strong>{filteredMaterials.length}</strong>
-              <span>Visible</span>
+              <strong>{completedCount}</strong>
+              <span>Completed</span>
             </div>
             <div>
               <strong>{totalDuration}</strong>
@@ -185,12 +207,32 @@ export default function Dashboard() {
 
                 <div className="card-footer">
                   <span>{material.duration} min</span>
-                  <Link
-                    to={`/materials/${material._id}`}
-                    className="btn btn-small"
-                  >
-                    View Detail
-                  </Link>
+
+                  <div className="card-actions">
+                    <button
+                      type="button"
+                      className={
+                        completedMaterialIds.has(material._id)
+                          ? "btn btn-completed"
+                          : "btn btn-progress"
+                      }
+                      disabled={updatingMaterialId === material._id}
+                      onClick={() => handleToggleComplete(material._id)}
+                    >
+                      {updatingMaterialId === material._id
+                        ? "Updating..."
+                        : completedMaterialIds.has(material._id)
+                          ? "Completed"
+                          : "Mark Done"}
+                    </button>
+
+                    <Link
+                      to={`/materials/${material._id}`}
+                      className="btn btn-small"
+                    >
+                      View
+                    </Link>
+                  </div>
                 </div>
               </article>
             ))}
