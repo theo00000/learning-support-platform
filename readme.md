@@ -505,7 +505,7 @@ CLIENT_ORIGIN=http://localhost:5173,https://learning-support-platform-4q3x.verce
 Add your project screenshots inside:
 
 ```txt
-docs/screenshots/
+docs/
 ```
 
 Recommended files:
@@ -521,9 +521,9 @@ docs/screenshots/mobile-dashboard.png
 Example usage:
 
 ```md
-![Register Page](docs/screenshots/register.png)
-![Dashboard](docs/screenshots/dashboard.png)
-![Material Detail](docs/screenshots/material-detail.png)
+![Register Page](docs/register.png)
+![Dashboard](docs/dashboard.png)
+![Material Detail](docs/material-detail.png)
 ![Mobile Dashboard](docs/screenshots/mobile-dashboard.png)
 ```
 
