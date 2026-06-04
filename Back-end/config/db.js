@@ -1,22 +1,34 @@
 const mongoose = require("mongoose");
 
+let cached = global.mongooseConnection;
+
+if (!cached) {
+  cached = global.mongooseConnection = {
+    conn: null,
+    promise: null,
+  };
+}
+
 const connectDB = async () => {
   const mongoUri = process.env.MONGO_URI;
 
   if (!mongoUri) {
-    console.error(
-      "❌ MONGO_URI is missing. Create Back-end/.env based on .env.example",
-    );
-    process.exit(1);
+    throw new Error("MONGO_URI is missing");
   }
 
-  try {
-    await mongoose.connect(mongoUri);
-    console.log("✅ MongoDB connected");
-  } catch (err) {
-    console.error("❌ Database connection failed:", err.message);
-    process.exit(1);
+  if (cached.conn) {
+    return cached.conn;
   }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(mongoUri).then((mongooseInstance) => {
+      console.log("✅ MongoDB connected");
+      return mongooseInstance;
+    });
+  }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 };
 
 module.exports = connectDB;

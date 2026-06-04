@@ -2,15 +2,15 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const connectDB = require("./config/db");
+
 const authRoutes = require("./routes/authRoutes");
 const materialRoutes = require("./routes/materialRoutes");
 const lessonRoutes = require("./routes/lessons");
 
-const app = require("./app");
-const connectDB = require("./config/db");
-const PORT = process.env.PORT || 5000;
+const app = express();
 
-const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://192.168.1.11:5173")
+const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -37,6 +37,19 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
+app.use(async (_req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("Database middleware error:", err.message);
+
+    res.status(500).json({
+      msg: "Database connection failed",
+    });
+  }
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", materialRoutes);
 app.use("/api/lessons", lessonRoutes);
@@ -58,8 +71,4 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-connectDB().then(() => {
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`✅ API server running on http://0.0.0.0:${PORT}`);
-  });
-});
+module.exports = app;
