@@ -502,30 +502,17 @@ CLIENT_ORIGIN=http://localhost:5173,https://learning-support-platform-4q3x.verce
 
 ## Screenshots
 
-Add your project screenshots inside:
-
-```txt
-docs/
-```
-
-Recommended files:
-
-```txt
-docs/register.png
-docs/login.png
-docs/dashboard.png
-docs/material-detail.png
-docs/screenshots/mobile-dashboard.png
-```
-
-Example usage:
-
-```md
+### Register Page
 ![Register Page](docs/register.png)
+
+### Dashboard
 ![Dashboard](docs/dashboard.png)
+
+### Material Detail
 ![Material Detail](docs/material-detail.png)
-![Mobile Dashboard](docs/screenshots/mobile-dashboard.png)
-```
+
+### Mobile Dashboard
+![Mobile Dashboard](docs/mobile-dashboard.png)
 
 ---
 
