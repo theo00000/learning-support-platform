@@ -60,7 +60,7 @@ app.use((err, _req, res, _next) => {
 });
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`✅ API server running on port ${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`✅ API server running on http://0.0.0.0:${PORT}`);
   });
 });

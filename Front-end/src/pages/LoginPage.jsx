@@ -1,117 +1,114 @@
-import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import API from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
-import { LogIn, Book } from "lucide-react";
+import { useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-export function LoginPage() {
+export default function Login() {
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
-  const [formData, setFormData] = useState({
+  const location = useLocation();
+
+  const [form, setForm] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const from = location.state?.from?.pathname || "/dashboard";
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+
+    if (!form.email || !form.password) {
+      setError("Email and password are required.");
+      return;
+    }
+
     try {
-      const res = await API.post("/auth/login", formData);
-      login(res.data);
-      navigate("/dashboard");
+      setIsSubmitting(true);
+
+      await login({
+        email: form.email,
+        password: form.password,
+      });
+
+      navigate(from, { replace: true });
     } catch (err) {
-      alert(err.response?.data?.msg || "Login Gagal.");
+      setError(
+        err?.response?.data?.msg ||
+          err?.response?.data?.message ||
+          "Login failed. Please check your email and password.",
+      );
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 font-sans">
-      {/* Bagian Atas: Logo & Judul */}
-      <div className="text-center mb-10">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-[#6366F1] rounded-full mb-6 shadow-md">
-          <Book className="w-10 h-10 text-white" />
+    <main className="auth-page">
+      <section className="auth-card">
+        <div className="auth-copy">
+          <span className="eyebrow">Welcome back</span>
+          <h1>Continue your learning journey.</h1>
+          <p>
+            Access learning materials, organize your study flow, and prepare
+            yourself with structured content.
+          </p>
         </div>
-        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">
-          Learning Support Platform
-        </h1>
-        <p className="text-muted-foreground text-lg font-medium">
-          Platform Belajar Siswa SMA Kelas 12
-        </p>
-      </div>
 
-      {/* Card Login */}
-      <div className="w-full max-w-[500px] bg-card rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-10">
-        <div className="flex items-center space-x-2 mb-2">
-          <LogIn className="w-6 h-6 text-foreground" />
-          <h2 className="text-2xl font-bold text-foreground">Login</h2>
-        </div>
-        <p className="text-muted-foreground mb-8 font-medium">
-          Masuk ke akun Anda untuk mengakses materi
-        </p>
+        <form className="form-card" onSubmit={handleSubmit}>
+          <h2>Login</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Field Email */}
-          <div className="space-y-2">
-            <label className="text-base font-bold text-foreground ml-1">
-              Email
-            </label>
+          {error && <div className="alert alert-error">{error}</div>}
+
+          <label>
+            Email
             <input
               name="email"
               type="email"
-              placeholder="nama@email.com"
-              className="w-full px-5 py-4 bg-input-background border-none rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-muted-foreground text-foreground"
-              value={formData.email}
+              placeholder="student@example.com"
+              value={form.email}
               onChange={handleChange}
-              required
+              autoComplete="email"
             />
-          </div>
+          </label>
 
-          {/* Field Password */}
-          <div className="space-y-2">
-            <label className="text-base font-bold text-foreground ml-1">
-              Password
-            </label>
+          <label>
+            Password
             <input
               name="password"
               type="password"
-              placeholder="Masukkan password"
-              className="w-full px-5 py-4 bg-input-background border-none rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-muted-foreground text-foreground"
-              value={formData.password}
+              placeholder="Your password"
+              value={form.password}
               onChange={handleChange}
-              required
+              autoComplete="current-password"
             />
-          </div>
+          </label>
 
-          {/* Tombol Login */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-primary-foreground font-bold py-4 rounded-xl hover:opacity-90 transition-opacity shadow-lg active:scale-[0.99] disabled:bg-muted mt-2 text-lg"
-          >
-            {loading ? "Memproses..." : "Login"}
+          <button className="btn btn-primary full" disabled={isSubmitting}>
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
-        </form>
 
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-muted-foreground font-medium">
-            Belum punya akun?{" "}
-            <Link
-              to="/register"
-              className="text-[#6366F1] hover:underline font-bold"
-            >
-              Daftar sekarang
-            </Link>
+          <p className="form-footer">
+            Don't have an account? <Link to="/register">Create account</Link>
           </p>
-        </div>
-      </div>
-    </div>
+        </form>
+      </section>
+    </main>
   );
 }
