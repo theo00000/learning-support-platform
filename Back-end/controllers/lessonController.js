@@ -1,68 +1,145 @@
 const Lesson = require("../models/Lesson");
+const Material = require("../models/Material");
 
-// GET semua lessons
-exports.getAllLessons = async (req, res) => {
+exports.getAllLessons = async (_req, res) => {
   try {
-    const lessons = await Lesson.find();
-    res.json(lessons);
+    const lessons = await Lesson.find()
+      .populate("material", "title subject difficulty")
+      .sort({ createdAt: -1 });
+
+    return res.json(lessons);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Get lessons error:", err.message);
+
+    return res.status(500).json({
+      msg: "Server error while fetching lessons",
+    });
   }
 };
 
-// GET Lesson
-exports.getLesson = async (req, res) => {
-  try {
-    const lesson = await Lesson.find().populate("material");
-    res.json(lesson);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// GET lesson berdasarkan ID
 exports.getLessonById = async (req, res) => {
   try {
-    const lesson = await Lesson.findById(req.params.id);
-    if (!lesson) return res.status(404).json({ message: "Lesson not found" });
-    res.json(lesson);
+    const lesson = await Lesson.findById(req.params.id).populate(
+      "material",
+      "title subject difficulty",
+    );
+
+    if (!lesson) {
+      return res.status(404).json({
+        msg: "Lesson not found",
+      });
+    }
+
+    return res.json(lesson);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (err.name === "CastError") {
+      return res.status(400).json({
+        msg: "Invalid lesson ID",
+      });
+    }
+
+    console.error("Get lesson detail error:", err.message);
+
+    return res.status(500).json({
+      msg: "Server error while fetching lesson detail",
+    });
   }
 };
 
-// POST tambah lesson baru
 exports.createLesson = async (req, res) => {
-  const { title, materialId, content } = req.body;
   try {
-    const lesson = new Lesson({ title, materialId, content });
-    await lesson.save();
-    res.status(201).json(lesson);
+    const { title, content, videoUrl = "", material } = req.body;
+
+    if (!title || !content || !material) {
+      return res.status(400).json({
+        msg: "Title, content, and material are required",
+      });
+    }
+
+    const materialExists = await Material.findById(material);
+
+    if (!materialExists) {
+      return res.status(404).json({
+        msg: "Material not found",
+      });
+    }
+
+    const lesson = await Lesson.create({
+      title,
+      content,
+      videoUrl,
+      material,
+    });
+
+    return res.status(201).json(lesson);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (err.name === "CastError") {
+      return res.status(400).json({
+        msg: "Invalid material ID",
+      });
+    }
+
+    console.error("Create lesson error:", err.message);
+
+    return res.status(500).json({
+      msg: "Server error while creating lesson",
+    });
   }
 };
 
-// PUT update lesson
 exports.updateLesson = async (req, res) => {
   try {
     const lesson = await Lesson.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
+      runValidators: true,
     });
-    if (!lesson) return res.status(404).json({ message: "Lesson not found" });
-    res.json(lesson);
+
+    if (!lesson) {
+      return res.status(404).json({
+        msg: "Lesson not found",
+      });
+    }
+
+    return res.json(lesson);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (err.name === "CastError") {
+      return res.status(400).json({
+        msg: "Invalid lesson ID",
+      });
+    }
+
+    console.error("Update lesson error:", err.message);
+
+    return res.status(500).json({
+      msg: "Server error while updating lesson",
+    });
   }
 };
 
-// DELETE lesson
 exports.deleteLesson = async (req, res) => {
   try {
     const lesson = await Lesson.findByIdAndDelete(req.params.id);
-    if (!lesson) return res.status(404).json({ message: "Lesson not found" });
-    res.json({ message: "Lesson deleted successfully" });
+
+    if (!lesson) {
+      return res.status(404).json({
+        msg: "Lesson not found",
+      });
+    }
+
+    return res.json({
+      msg: "Lesson deleted successfully",
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (err.name === "CastError") {
+      return res.status(400).json({
+        msg: "Invalid lesson ID",
+      });
+    }
+
+    console.error("Delete lesson error:", err.message);
+
+    return res.status(500).json({
+      msg: "Server error while deleting lesson",
+    });
   }
 };
