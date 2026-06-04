@@ -511,10 +511,10 @@ docs/screenshots/
 Recommended files:
 
 ```txt
-docs/screenshots/register.png
-docs/screenshots/login.png
-docs/screenshots/dashboard.png
-docs/screenshots/material-detail.png
+docs/register.png
+docs/login.png
+docs/dashboard.png
+docs/material-detail.png
 docs/screenshots/mobile-dashboard.png
 ```
 
