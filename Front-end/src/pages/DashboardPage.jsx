@@ -17,14 +17,16 @@ const subjectOptions = [
 export default function Dashboard() {
   const { user } = useAuth();
 
+  const [materials, setMaterials] = useState([]);
   const [progressItems, setProgressItems] = useState([]);
   const [updatingMaterialId, setUpdatingMaterialId] = useState(null);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchMaterials = async () => {
+  const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
       setError("");
@@ -41,10 +43,17 @@ export default function Dashboard() {
         Array.isArray(progressResponse.data) ? progressResponse.data : [],
       );
     } catch (err) {
+      console.log("DASHBOARD ERROR:", {
+        message: err.message,
+        status: err?.response?.status,
+        data: err?.response?.data,
+      });
+
       setError(
         err?.response?.data?.msg ||
           err?.response?.data?.message ||
-          "Failed to load learning materials.",
+          err.message ||
+          "Failed to load dashboard data.",
       );
     } finally {
       setIsLoading(false);
@@ -52,22 +61,53 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchMaterials();
+    fetchDashboardData();
   }, []);
 
   const completedMaterialIds = useMemo(() => {
     return new Set(
       progressItems
-        .filter((item) => item.status === "completed")
-        .map((item) => item.material?._id || item.material),
+        .filter((item) => item?.status === "completed")
+        .map((item) => {
+          if (typeof item?.material === "string") {
+            return item.material;
+          }
+
+          return item?.material?._id;
+        })
+        .filter(Boolean),
     );
   }, [progressItems]);
 
+  const filteredMaterials = useMemo(() => {
+    const keyword = searchTerm.toLowerCase().trim();
+
+    return materials.filter((material) => {
+      const title = material?.title?.toLowerCase() || "";
+      const description = material?.description?.toLowerCase() || "";
+      const subject = material?.subject || "";
+
+      const matchesSearch =
+        !keyword || title.includes(keyword) || description.includes(keyword);
+
+      const matchesSubject =
+        selectedSubject === "all" || subject === selectedSubject;
+
+      return matchesSearch && matchesSubject;
+    });
+  }, [materials, searchTerm, selectedSubject]);
+
   const completedCount = completedMaterialIds.size;
+
+  const totalDuration = filteredMaterials.reduce(
+    (total, material) => total + Number(material?.duration || 0),
+    0,
+  );
 
   const handleToggleComplete = async (materialId) => {
     try {
       setUpdatingMaterialId(materialId);
+      setError("");
 
       if (completedMaterialIds.has(materialId)) {
         await api.delete(`/progress/${materialId}`);
@@ -80,9 +120,16 @@ export default function Dashboard() {
         Array.isArray(progressResponse.data) ? progressResponse.data : [],
       );
     } catch (err) {
+      console.log("PROGRESS ERROR:", {
+        message: err.message,
+        status: err?.response?.status,
+        data: err?.response?.data,
+      });
+
       setError(
         err?.response?.data?.msg ||
           err?.response?.data?.message ||
+          err.message ||
           "Failed to update learning progress.",
       );
     } finally {
@@ -100,8 +147,8 @@ export default function Dashboard() {
             <span className="eyebrow">Student Dashboard</span>
             <h1>Hi, {user?.name || "Student"} 👋</h1>
             <p>
-              Explore learning materials, filter by subject, and prepare your
-              study session with structured content.
+              Explore learning materials, filter by subject, and track your
+              learning progress.
             </p>
 
             <div className="hero-meta">
@@ -156,7 +203,7 @@ export default function Dashboard() {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={fetchMaterials}
+              onClick={fetchDashboardData}
             >
               Try Again
             </button>
@@ -184,58 +231,60 @@ export default function Dashboard() {
 
         {!isLoading && !error && filteredMaterials.length > 0 && (
           <section className="materials-grid">
-            {filteredMaterials.map((material) => (
-              <article className="material-card" key={material._id}>
-                <div className="card-top">
-                  <span className="subject-pill">{material.subject}</span>
-                  <span
-                    className={`difficulty ${material.difficulty?.toLowerCase()}`}
-                  >
-                    {material.difficulty}
-                  </span>
-                </div>
+            {filteredMaterials.map((material) => {
+              const isCompleted = completedMaterialIds.has(material._id);
+              const isUpdating = updatingMaterialId === material._id;
 
-                <h3>{material.title}</h3>
-
-                <p>{material.description}</p>
-
-                <div className="topics">
-                  {(material.topics || []).slice(0, 3).map((topic) => (
-                    <span key={topic}>{topic}</span>
-                  ))}
-                </div>
-
-                <div className="card-footer">
-                  <span>{material.duration} min</span>
-
-                  <div className="card-actions">
-                    <button
-                      type="button"
-                      className={
-                        completedMaterialIds.has(material._id)
-                          ? "btn btn-completed"
-                          : "btn btn-progress"
-                      }
-                      disabled={updatingMaterialId === material._id}
-                      onClick={() => handleToggleComplete(material._id)}
+              return (
+                <article className="material-card" key={material._id}>
+                  <div className="card-top">
+                    <span className="subject-pill">{material.subject}</span>
+                    <span
+                      className={`difficulty ${material.difficulty?.toLowerCase()}`}
                     >
-                      {updatingMaterialId === material._id
-                        ? "Updating..."
-                        : completedMaterialIds.has(material._id)
-                          ? "Completed"
-                          : "Mark Done"}
-                    </button>
-
-                    <Link
-                      to={`/materials/${material._id}`}
-                      className="btn btn-small"
-                    >
-                      View
-                    </Link>
+                      {material.difficulty}
+                    </span>
                   </div>
-                </div>
-              </article>
-            ))}
+
+                  <h3>{material.title}</h3>
+                  <p>{material.description}</p>
+
+                  <div className="topics">
+                    {(material.topics || []).slice(0, 3).map((topic) => (
+                      <span key={topic}>{topic}</span>
+                    ))}
+                  </div>
+
+                  <div className="card-footer">
+                    <span>{material.duration} min</span>
+
+                    <div className="card-actions">
+                      <button
+                        type="button"
+                        className={
+                          isCompleted ? "btn btn-completed" : "btn btn-progress"
+                        }
+                        disabled={isUpdating}
+                        onClick={() => handleToggleComplete(material._id)}
+                      >
+                        {isUpdating
+                          ? "Updating..."
+                          : isCompleted
+                            ? "Completed"
+                            : "Mark Done"}
+                      </button>
+
+                      <Link
+                        to={`/materials/${material._id}`}
+                        className="btn btn-small"
+                      >
+                        View
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </section>
         )}
       </main>
