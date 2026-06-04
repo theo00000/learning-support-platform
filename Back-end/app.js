@@ -10,7 +10,7 @@ const lessonRoutes = require("./routes/lessons");
 
 const app = express();
 
-const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
+const allowedOrigins = (process.env.CLIENT_ORIGIN || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -18,10 +18,15 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) {
         return callback(null, true);
       }
 
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.log("Blocked by CORS:", origin);
       return callback(new Error(`CORS blocked for origin: ${origin}`));
     },
     credentials: true,
@@ -29,6 +34,13 @@ app.use(
 );
 
 app.use(express.json({ limit: "1mb" }));
+
+app.get("/", (_req, res) => {
+  res.json({
+    message: "Learning Support Platform API",
+    health: "/api/health",
+  });
+});
 
 app.get("/api/health", (_req, res) => {
   res.json({
@@ -42,10 +54,10 @@ app.use(async (_req, res, next) => {
     await connectDB();
     next();
   } catch (err) {
-    console.error("Database middleware error:", err.message);
-
-    res.status(500).json({
+    console.error("Database connection failed:", err.message);
+    return res.status(500).json({
       msg: "Database connection failed",
+      detail: err.message,
     });
   }
 });
@@ -64,10 +76,7 @@ app.use((err, _req, res, _next) => {
   console.error("Unhandled error:", err.message);
 
   res.status(err.status || 500).json({
-    message:
-      process.env.NODE_ENV === "production"
-        ? "Internal server error"
-        : err.message,
+    message: err.message || "Internal server error",
   });
 });
 

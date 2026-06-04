@@ -22,7 +22,7 @@ const connectDB = async () => {
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(mongoUri).then((mongooseInstance) => {
-      console.log("✅ MongoDB connected");
+      console.log("MongoDB connected");
       return mongooseInstance;
     });
   }
