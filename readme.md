@@ -1,23 +1,84 @@
 # Learning Support Platform
 
-**Learning Support Platform** is a fullstack web and mobile learning application designed to help high school students access structured learning materials based on subject, difficulty, study goals, and personal learning progress.
+**Learning Support Platform** is a fullstack web learning application designed to help high school students access structured learning materials, track their study progress, and ask questions through an AI-powered study assistant.
 
-This project was built as a software engineering portfolio project to practice fullstack development, authentication flow, REST API integration, database modeling, deployment, cross-platform user experience, and user-based progress tracking.
+This project was built as a software engineering portfolio project to practice fullstack development, authentication flow, REST API integration, MongoDB data modeling, deployment, AI API integration, and user-based progress tracking.
+
+---
+
+## Live Demo
+
+- **Web App:** https://learning-support-platform-4q3x.vercel.app
+- **Backend API Health Check:** https://learning-support-platform-six.vercel.app/api/health
+
+---
+
+## Problem Statement
+
+High school students often need a simple and organized way to access learning materials, especially when preparing for exams. Learning resources can be scattered across different platforms, making it harder for students to find the right material based on subject, difficulty, and available study time.
+
+Another common problem is that students often lose track of which materials they have already completed. Without progress tracking, it becomes harder to plan study sessions and continue learning consistently.
+
+Learning Support Platform was created to solve this problem by providing a centralized learning dashboard where students can access structured materials, search by keyword, filter by subject, open detailed learning content, mark materials as completed, and ask questions using an AI Study Assistant.
+
+---
+
+## Project Overview
+
+Learning Support Platform provides students with an accessible platform to register, login, browse learning materials, filter materials by subject, view detailed learning content, track completed materials, and receive AI-generated study explanations based on available learning materials.
+
+The project consists of two main parts:
+
+- **Backend API** built with Node.js, Express.js, MongoDB, JWT authentication, and OpenAI API integration
+- **Web Frontend** built with React and Vite
+
+---
+
+## Main Features
+
+### Authentication
+
+- Student registration
+- Student login
+- JWT-based authentication
+- Protected routes
+- Persistent session on the web app
+- Logout functionality
+
+### Learning Materials
+
+- List of learning materials
+- Material detail page
+- Search materials by keyword
+- Filter materials by subject
+- Difficulty badge
+- Duration information
+- Related materials by subject
+
+### Learning Progress
+
+- Mark material as completed
+- Reset completed material progress
+- View completed material count on dashboard
+- Store progress per authenticated user
+- Track relationship between user and material
+
+### AI Study Assistant
+
+- Ask questions about learning materials
+- Generate simple AI explanations
+- Use existing learning materials from MongoDB as context
+- Display related material sources
+- Handle AI quota or API errors gracefully
+- Keep the OpenAI API key safely on the backend
 
 ---
 
 ## AI Study Assistant
 
-Learning Support Platform includes an **AI Study Assistant** feature that helps students ask questions about available learning materials.
+The **AI Study Assistant** helps students ask questions about available learning materials. When a student submits a question, the frontend sends the request to the backend. The backend validates the user's JWT token, retrieves relevant materials from MongoDB, sends the question and material context to the OpenAI API, and returns an answer with related sources.
 
-The AI assistant works by sending the student's question to the backend. The backend then retrieves relevant learning materials from MongoDB and uses them as context before generating an AI response.
-
-This feature is designed to help students understand learning materials more easily through:
-
-* Simple explanations
-* Key points
-* Study tips
-* Related material sources
+This feature is designed to help students understand learning materials more easily through simple explanations, key points, study tips, and relevant material references.
 
 ### AI Feature Flow
 
@@ -32,7 +93,7 @@ flowchart TD
     G --> H[Frontend displays AI response]
 ```
 
-### AI Routes
+### AI Route
 
 | Method | Endpoint      | Description                                            |
 | ------ | ------------- | ------------------------------------------------------ |
@@ -62,96 +123,9 @@ flowchart TD
 }
 ```
 
-### Backend Environment Variable
-
-The AI feature requires an OpenAI API key on the backend.
-
-```env
-OPENAI_API_KEY=your_openai_api_key
-```
-
-The API key is stored only in the backend environment variable and is not exposed to the frontend.
-
 ### AI Error Handling
 
-If the OpenAI API quota is unavailable or billing is not active, the backend handles the error gracefully and returns a clear message instead of crashing the application.
-
-This makes the application more reliable during demo or production testing.
-
-
-## Live Demo
-
-- **Web App:** https://learning-support-platform-4q3x.vercel.app
-- **Backend API Health Check:** https://learning-support-platform-six.vercel.app/api/health
-
----
-
-## Problem Statement
-
-High school students often need a simple and organized way to access learning materials, especially when preparing for exams. Learning resources can be scattered across different platforms, making it harder for students to find the right material based on subject, difficulty, and available study time.
-
-Another common problem is that students often lose track of which materials they have already completed. Without progress tracking, it becomes harder to plan study sessions and continue learning consistently.
-
-Learning Support Platform was created to solve this problem by providing a centralized learning dashboard where students can access structured materials, filter by subject, search by keyword, view detailed learning content, and track completed materials.
-
----
-
-## Project Overview
-
-Learning Support Platform provides students with an accessible platform to register, login, browse learning materials, filter materials by subject, open detailed learning content, and mark materials as completed.
-
-The project consists of three main parts:
-
-- **Backend API** built with Node.js, Express.js, MongoDB, and JWT authentication
-- **Web Frontend** built with React and Vite
-- **Mobile App** built with Expo React Native
-
----
-
-## Features
-
-### Authentication
-
-- Student registration
-- Student login
-- JWT-based authentication
-- Protected routes
-- Persistent session on web and mobile
-- Logout functionality
-
-### Learning Materials
-
-- List of learning materials
-- Material detail page
-- Search materials by keyword
-- Filter materials by subject
-- Difficulty badge
-- Duration information
-- Related materials by subject
-
-### Learning Progress
-
-- Mark material as completed
-- Reset completed material progress
-- View completed material count on dashboard
-- Store progress per authenticated user
-- Track relationship between user and material
-
-### Platform Support
-
-- Web application
-- Mobile application
-- REST API backend
-- MongoDB database integration
-- Deployed backend and frontend using Vercel
-
-### AI Study Assistant
-
-- Ask questions about learning materials
-- Generate simple explanations using AI
-- Use existing material content as context
-- Display related material sources
-- Handle AI quota or API errors gracefully
+If the OpenAI API quota is unavailable, billing is not active, or the AI service returns an error, the backend handles the issue gracefully and returns a clear error message instead of crashing the application.
 
 ---
 
@@ -177,14 +151,6 @@ The project consists of three main parts:
 - Axios
 - CSS
 
-### Mobile App
-
-- Expo
-- React Native
-- React Navigation
-- Axios
-- AsyncStorage
-
 ### Deployment
 
 - Vercel for web frontend
@@ -200,21 +166,9 @@ learning-support-platform/
 ├── Back-end/
 │   ├── config/
 │   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── materialController.js
-│   │   ├── lessonController.js
-│   │   └── progressController.js
 │   ├── middleware/
 │   ├── models/
-│   │   ├── User.js
-│   │   ├── Material.js
-│   │   ├── Lesson.js
-│   │   └── Enrollment.js
 │   ├── routes/
-│   │   ├── authRoutes.js
-│   │   ├── materialRoutes.js
-│   │   ├── lessons.js
-│   │   └── progressRoutes.js
 │   ├── .env.example
 │   ├── package.json
 │   ├── seed.js
@@ -232,22 +186,13 @@ learning-support-platform/
 │   ├── .env.example
 │   └── package.json
 │
-├── my-learning-app/
-│   ├── src/
-│   │   ├── context/
-│   │   ├── screens/
-│   │   ├── services/
-│   │   └── styles/
-│   ├── App.js
-│   ├── app.json
-│   └── package.json
-│
 ├── docs/
 │   ├── register.png
 │   ├── dashboard.png
 │   ├── material-detail.png
-│   └── mobile-dashboard.png
+│   └── testing documentation
 │
+├── .gitignore
 └── README.md
 ```
 
@@ -257,19 +202,23 @@ learning-support-platform/
 
 ```mermaid
 flowchart LR
-    U[User / Student]
+    U[Student]
 
     subgraph Client Side
         W[Web App<br/>React + Vite]
-        M[Mobile App<br/>Expo React Native]
     end
 
     subgraph Server Side
         API[Express.js REST API]
         AUTH[JWT Authentication]
         ROUTES[Routes / Controllers]
+        AI[AI Study Assistant Logic]
         PROGRESS[Progress Tracking Logic]
         DBLAYER[Mongoose ODM]
+    end
+
+    subgraph External Service
+        OPENAI[OpenAI API]
     end
 
     subgraph Database
@@ -285,31 +234,24 @@ flowchart LR
     end
 
     U --> W
-    U --> M
-
     W --> API
-    M --> API
-
     API --> AUTH
     API --> ROUTES
     ROUTES --> PROGRESS
+    ROUTES --> AI
+    AI --> OPENAI
     ROUTES --> DBLAYER
-
     DBLAYER --> USER
     DBLAYER --> MATERIAL
     DBLAYER --> ENROLLMENT
-
     USER --> MDB
     MATERIAL --> MDB
     ENROLLMENT --> MDB
-
     W --> VF
     API --> VB
 ```
 
-The web frontend and mobile app communicate with the backend through REST API endpoints. Authentication is handled using JWT tokens, which are stored locally on the client side.
-
-The progress tracking feature introduces a relationship between authenticated users and learning materials through an enrollment/progress model.
+The web frontend communicates with the backend through REST API endpoints. Authentication is handled using JWT tokens, which are stored locally on the client side. The backend connects to MongoDB Atlas for user, material, and progress data. The AI Study Assistant uses material data as context before generating a response through the OpenAI API.
 
 ---
 
@@ -318,17 +260,22 @@ The progress tracking feature introduces a relationship between authenticated us
 ```mermaid
 sequenceDiagram
     participant User
-    participant Frontend as Web / Mobile Frontend
+    participant Frontend as React Frontend
     participant API as Express Backend
     participant DB as MongoDB Atlas
+    participant AI as OpenAI API
 
-    User->>Frontend: Register / Login / Access Materials
+    User->>Frontend: Register / Login / Access Materials / Ask AI
     Frontend->>API: Send HTTP Request with JWT Token
     API->>API: Validate Token
     API->>DB: Read / Write Data
     DB-->>API: Return Query Result
+    alt AI Question
+        API->>AI: Send question and material context
+        AI-->>API: Return generated explanation
+    end
     API-->>Frontend: Return JSON Response
-    Frontend-->>User: Display Dashboard / Material Detail / Progress
+    Frontend-->>User: Display Dashboard / Material Detail / Progress / AI Answer
 ```
 
 ---
@@ -443,6 +390,12 @@ erDiagram
 | POST   | `/api/progress/:materialId/complete` | Mark material as completed           |
 | DELETE | `/api/progress/:materialId`          | Reset material progress              |
 
+### AI Routes
+
+| Method | Endpoint      | Description                                            |
+| ------ | ------------- | ------------------------------------------------------ |
+| POST   | `/api/ai/ask` | Ask AI Study Assistant using learning material context |
+
 ---
 
 ## Getting Started
@@ -483,6 +436,7 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_random_secret_key
 CLIENT_ORIGIN=http://localhost:5173
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 Seed database:
@@ -560,70 +514,6 @@ http://localhost:5173
 
 ---
 
-## Mobile App Setup
-
-Go to mobile folder:
-
-```bash
-cd my-learning-app
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Create `.env` file:
-
-```bash
-cp .env.example .env
-```
-
-For Android Emulator:
-
-```env
-EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:5000/api
-```
-
-For physical phone using Expo Go:
-
-```env
-EXPO_PUBLIC_API_BASE_URL=http://YOUR_LAPTOP_IP:5000/api
-```
-
-Example:
-
-```env
-EXPO_PUBLIC_API_BASE_URL=http://192.168.1.3:5000/api
-```
-
-Run mobile app:
-
-```bash
-npm start
-```
-
-For Android:
-
-```bash
-npm run android
-```
-
----
-
-## Important Notes for Mobile Development
-
-If you are testing with a physical phone:
-
-1. Make sure laptop and phone are connected to the same WiFi.
-2. Backend must listen on `0.0.0.0`.
-3. Use your laptop IP address, not `localhost`.
-4. Allow port `5000` through firewall if needed.
-5. Restart Expo after changing `.env`.
-
----
-
 ## Environment Variables
 
 ### Backend `.env`
@@ -633,18 +523,13 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_random_secret_key
 CLIENT_ORIGIN=http://localhost:5173
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### Web Frontend `.env`
 
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
-```
-
-### Mobile `.env`
-
-```env
-EXPO_PUBLIC_API_BASE_URL=http://YOUR_BACKEND_IP:5000/api
 ```
 
 ---
@@ -660,7 +545,8 @@ Required environment variables:
 ```env
 MONGO_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_random_secret_key
-CLIENT_ORIGIN=https://your_frontend_domain.vercel.app
+CLIENT_ORIGIN=https://learning-support-platform-4q3x.vercel.app
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 Backend health check:
@@ -705,9 +591,20 @@ CLIENT_ORIGIN=http://localhost:5173,https://learning-support-platform-4q3x.verce
 
 ![Material Detail](docs/material-detail.png)
 
-### Mobile Dashboard
+---
 
-![Mobile Dashboard](docs/mobile-dashboard.png)
+## Testing Documentation
+
+Testing documentation is stored in the `docs/` folder. The testing documentation covers the main user flows, including authentication, protected routes, dashboard access, material detail page, progress tracking, and AI Study Assistant behavior.
+
+The AI Study Assistant testing focuses on:
+
+- Asking a question from the frontend
+- Sending the question to the backend
+- Validating authenticated access
+- Retrieving relevant material sources
+- Returning an AI-generated answer
+- Handling API quota or service errors gracefully
 
 ---
 
@@ -721,18 +618,16 @@ Through this project, I learned how to:
 - Hash passwords using bcryptjs
 - Protect API routes with middleware
 - Connect React frontend with backend API
-- Build a mobile app using Expo React Native
-- Store authentication sessions on web and mobile
+- Store authentication sessions on the client side
 - Structure a fullstack project more maintainably
 - Build user-based progress tracking with MongoDB relationships
 - Deploy frontend and backend using Vercel
 - Debug CORS issues in production
-- Debug network issues between mobile app and local backend
 - Manage environment variables across local and production environments
-- Integrated an AI-powered study assistant with backend API
-- Used existing learning materials as AI context
-- Learned how to safely call AI API from the backend without exposing API keys on the frontend
-- Implemented AI error handling for quota and API failures
+- Integrate an AI-powered study assistant with backend API
+- Use existing learning materials as AI context
+- Safely call AI API from the backend without exposing API keys on the frontend
+- Implement AI error handling for quota and API failures
 
 ---
 
@@ -745,7 +640,7 @@ This project focuses on more than just coding. It also emphasizes:
 - Route-controller-model backend pattern
 - API-based application flow
 - Authentication and authorization basics
-- Data consistency between frontend, backend, and mobile
+- Data consistency between frontend, backend, and database
 - User-to-material progress relationship
 - Error handling and loading states
 - Environment variable management
@@ -765,7 +660,7 @@ Planned improvements:
 - Add role-based access control
 - Add unit and integration testing
 - Add API documentation using Postman or Swagger
-- Improve mobile UI animations
+- Improve AI answer formatting
 - Add profile editing feature
 - Add secure token handling improvement for production usage
 
@@ -780,13 +675,12 @@ Current status:
 ```txt
 Backend API         : Completed basic version
 Web Frontend        : Completed basic version
-Mobile App          : Completed basic version
 Authentication      : Implemented
 Material Dashboard  : Implemented
 Material Detail     : Implemented
 Progress Tracking   : Implemented
 Deployment          : Implemented
-AI Study Assistant : Implemented
+AI Study Assistant  : Implemented
 ```
 
 ---
@@ -795,13 +689,15 @@ AI Study Assistant : Implemented
 
 This project uses JWT for authentication. For learning and portfolio purposes, tokens are stored locally on the client side.
 
+The OpenAI API key is stored only in the backend environment variable and is not exposed to the frontend.
+
 For a production-level application, future improvements may include:
 
 - Using httpOnly cookies for web authentication
-- Using more secure storage for mobile tokens
 - Adding refresh token handling
 - Adding stronger role-based authorization
 - Adding rate limiting for authentication routes
+- Adding rate limiting for AI requests
 
 ---
 
@@ -816,6 +712,6 @@ For a production-level application, future improvements may include:
 
 ## Portfolio Description
 
-Learning Support Platform is a fullstack web and mobile application designed to help students access structured learning materials and track completed study materials. I built this project to practice software engineering fundamentals such as authentication, REST API integration, MongoDB data modeling, protected routing, deployment, user-based progress tracking, and cross-platform application development.
+Learning Support Platform is a fullstack web application designed to help students access structured learning materials, track completed study materials, and ask questions through an AI Study Assistant. I built this project to practice software engineering fundamentals such as authentication, REST API integration, MongoDB data modeling, protected routing, deployment, user-based progress tracking, and AI API integration.
 
 This project represents my learning journey in building practical digital products that solve real user problems.
