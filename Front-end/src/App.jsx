@@ -1,23 +1,20 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Dashboard from "./pages/DashboardPage";
-import Login from "./pages/LoginPage";
-import MaterialDetail from "./pages/MaterialDetailPage";
-import Register from "./pages/RegisterPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import MaterialDetailPage from "./pages/MaterialDetailPage";
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-
-      <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/materials/:id" element={<MaterialDetail />} />
-      </Route>
-
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/materials/:id" element={<MaterialDetailPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
