@@ -19,7 +19,7 @@ Subject: ${material.subject}
 Difficulty: ${material.difficulty}
 Description: ${material.description}
 Content:
-${material.content}
+${material.content || "No detailed content available."}
 `;
     })
     .join("\n---\n");
@@ -60,7 +60,7 @@ exports.askStudyAssistant = async (req, res) => {
         {
           role: "system",
           content:
-            "You are an AI Study Assistant for high school students. Answer clearly, simply, and based on the provided learning materials. If the provided material is limited, say that the available material is limited and give a careful general explanation.",
+            "You are an AI Study Assistant for high school students. Answer clearly and simply in Indonesian. Use the provided learning materials as the main context. If the context is limited, say that the available material is limited and provide a careful general explanation.",
         },
         {
           role: "user",
@@ -71,7 +71,10 @@ ${question}
 Learning material context:
 ${context}
 
-Please answer in Indonesian with a simple explanation, bullet points if useful, and a short study tip.
+Please answer with:
+1. A simple explanation
+2. Key points
+3. A short study tip
 `,
         },
       ],
@@ -87,11 +90,28 @@ Please answer in Indonesian with a simple explanation, bullet points if useful, 
       })),
     });
   } catch (err) {
-    console.error("AI assistant error:", err);
+    console.error("AI assistant error:", {
+      message: err.message,
+      status: err.status,
+      code: err.code,
+      type: err.type,
+      error: err.error,
+    });
+
+    if (err.code === "insufficient_quota") {
+      return res.status(429).json({
+        msg: "AI quota is currently unavailable. Please check OpenAI billing or try again later.",
+        detail:
+          "The AI feature is connected successfully, but the OpenAI API quota is not available.",
+      });
+    }
 
     return res.status(500).json({
       msg: "Server error while generating AI response",
       detail: err.message,
+      status: err.status,
+      code: err.code,
+      type: err.type,
     });
   }
 };

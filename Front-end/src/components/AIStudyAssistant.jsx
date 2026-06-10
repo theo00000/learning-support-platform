@@ -1,6 +1,12 @@
 import { useState } from "react";
 import api from "../services/api";
 
+const suggestedQuestions = [
+  "Jelaskan materi matematika dengan bahasa sederhana",
+  "Buat rangkuman singkat dari materi yang tersedia",
+  "Kasih tips belajar untuk memahami materi sulit",
+];
+
 export default function AIStudyAssistant() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -22,9 +28,7 @@ export default function AIStudyAssistant() {
       setAnswer("");
       setSources([]);
 
-      const response = await api.post("/ai/ask", {
-        question,
-      });
+      const response = await api.post("/ai/ask", { question });
 
       setAnswer(response.data.answer || "");
       setSources(
@@ -48,49 +52,125 @@ export default function AIStudyAssistant() {
     }
   };
 
+  const handleSuggestionClick = (text) => {
+    setQuestion(text);
+    setError("");
+  };
+
   return (
-    <section className="ai-card">
-      <div>
-        <span className="eyebrow">AI Study Assistant</span>
-        <h2>Ask about your learning materials</h2>
+    <section className="ai-feature-card">
+      <div className="ai-feature-main">
+        <div className="ai-feature-badge">
+          <span>✦</span>
+          AI Study Assistant
+        </div>
+
+        <h2>Study smarter with your learning companion</h2>
+
         <p>
-          Ask a question and the assistant will answer using available learning
-          materials as context.
+          Ask questions about available learning materials and get simple
+          explanations, key points, and practical study tips.
         </p>
+
+        <div className="ai-suggestion-list">
+          {suggestedQuestions.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => handleSuggestionClick(item)}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={handleAsk} className="ai-feature-form">
+          <div className="ai-input-shell">
+            <textarea
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              placeholder="Ask anything about your learning materials..."
+              rows={4}
+            />
+
+            <div className="ai-input-footer">
+              <span>{question.length}/300</span>
+
+              <button type="submit" disabled={isAsking}>
+                {isAsking ? (
+                  <>
+                    <span className="ai-loading-dot" />
+                    Thinking
+                  </>
+                ) : (
+                  "Ask AI"
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+
+        {error && <div className="ai-feature-error">{error}</div>}
       </div>
 
-      <form onSubmit={handleAsk} className="ai-form">
-        <textarea
-          value={question}
-          onChange={(event) => setQuestion(event.target.value)}
-          placeholder="Example: Jelaskan hukum Newton 2 dengan bahasa sederhana"
-          rows={3}
-        />
-
-        <button type="submit" className="btn btn-primary" disabled={isAsking}>
-          {isAsking ? "Thinking..." : "Ask AI"}
-        </button>
-      </form>
-
-      {error && <div className="alert alert-error">{error}</div>}
-
-      {answer && (
-        <div className="ai-answer">
-          <h3>Answer</h3>
-          <p>{answer}</p>
+      <aside className="ai-feature-side">
+        <div className="ai-orb">
+          <span>AI</span>
         </div>
-      )}
 
-      {sources.length > 0 && (
-        <div className="ai-sources">
-          <h3>Related Materials</h3>
-          <div className="topics">
-            {sources.map((source) => (
-              <span key={source.id}>
-                {source.subject} · {source.title}
-              </span>
-            ))}
+        <div className="ai-side-content">
+          <span className="ai-side-label">Powered learning</span>
+          <h3>Context-aware answers</h3>
+          <p>
+            The assistant uses available course materials as context before
+            generating a response.
+          </p>
+        </div>
+
+        <div className="ai-mini-grid">
+          <div>
+            <span>01</span>
+            <strong>Simple explanation</strong>
           </div>
+          <div>
+            <span>02</span>
+            <strong>Key points</strong>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Study tips</strong>
+          </div>
+        </div>
+      </aside>
+
+      {(answer || sources.length > 0) && (
+        <div className="ai-feature-response">
+          {answer && (
+            <div className="ai-answer-card">
+              <div className="ai-answer-header">
+                <span>AI Answer</span>
+                <small>Generated response</small>
+              </div>
+              <p>{answer}</p>
+            </div>
+          )}
+
+          {sources.length > 0 && (
+            <div className="ai-source-card">
+              <div className="ai-answer-header">
+                <span>Related Materials</span>
+                <small>Used as context</small>
+              </div>
+
+              <div className="ai-source-list">
+                {sources.map((source) => (
+                  <span key={source.id}>
+                    {source.subject} · {source.title}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </section>
