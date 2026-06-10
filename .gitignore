@@ -1,15 +1,12 @@
-node_modules/
 .env
 .env.local
-.vercel/
-dist/
-build/
+.env.*.local
 
-Back-end/node_modules/
-Back-end/.env
+node_modules
+Back-end/node_modules
+Front-end/node_modules
+my-learning-app/node_modules
 
-Front-end/node_modules/
-Front-end/.env
-
-my-learning-app/node_modules/
-my-learning-app/.env
+dist
+build
+.vercel

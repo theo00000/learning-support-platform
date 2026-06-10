@@ -726,4 +726,73 @@ select:focus {
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+  .ai-card {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07);
+  }
+
+  .ai-card .eyebrow {
+    background: #eef4ff;
+    color: #2563eb;
+  }
+
+  .ai-card h2 {
+    margin: 0.9rem 0 0.5rem;
+    color: #102033;
+  }
+
+  .ai-card p {
+    color: #64748b;
+    line-height: 1.7;
+  }
+
+  .ai-form {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .ai-form textarea {
+    width: 100%;
+    border: 1px solid #dbe3ef;
+    border-radius: 18px;
+    padding: 1rem;
+    background: #f8fafc;
+    color: #102033;
+    outline: none;
+    resize: vertical;
+    font: inherit;
+  }
+
+  .ai-form textarea:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  }
+
+  .ai-answer,
+  .ai-sources {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+
+  .ai-answer h3,
+  .ai-sources h3 {
+    margin: 0 0 0.6rem;
+    color: #102033;
+  }
+
+  .ai-answer p {
+    white-space: pre-wrap;
+    margin: 0;
+    color: #334155;
+  }
 }

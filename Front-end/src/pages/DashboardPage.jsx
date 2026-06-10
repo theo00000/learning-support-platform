@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import AIStudyAssistant from "../components/AIStudyAssistant";
 import api from "../services/api";
 
 const subjectOptions = [
@@ -172,6 +173,8 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
+
+        <AIStudyAssistant />
 
         <section className="toolbar">
           <div className="search-box">
