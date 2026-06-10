@@ -6,6 +6,79 @@ This project was built as a software engineering portfolio project to practice f
 
 ---
 
+## AI Study Assistant
+
+Learning Support Platform includes an **AI Study Assistant** feature that helps students ask questions about available learning materials.
+
+The AI assistant works by sending the student's question to the backend. The backend then retrieves relevant learning materials from MongoDB and uses them as context before generating an AI response.
+
+This feature is designed to help students understand learning materials more easily through:
+
+* Simple explanations
+* Key points
+* Study tips
+* Related material sources
+
+### AI Feature Flow
+
+```mermaid
+flowchart TD
+    A[Student asks a question] --> B[Frontend sends request to Backend]
+    B --> C[Backend validates JWT token]
+    C --> D[Backend searches relevant materials in MongoDB]
+    D --> E[Backend sends question and material context to OpenAI API]
+    E --> F[AI generates study explanation]
+    F --> G[Backend returns answer and related sources]
+    G --> H[Frontend displays AI response]
+```
+
+### AI Routes
+
+| Method | Endpoint      | Description                                            |
+| ------ | ------------- | ------------------------------------------------------ |
+| POST   | `/api/ai/ask` | Ask AI Study Assistant using learning material context |
+
+### AI Request Example
+
+```json
+{
+  "question": "Jelaskan materi matematika dengan bahasa sederhana"
+}
+```
+
+### AI Response Example
+
+```json
+{
+  "question": "Jelaskan materi matematika dengan bahasa sederhana",
+  "answer": "Generated explanation from AI...",
+  "sources": [
+    {
+      "id": "material_id",
+      "title": "Material title",
+      "subject": "Matematika"
+    }
+  ]
+}
+```
+
+### Backend Environment Variable
+
+The AI feature requires an OpenAI API key on the backend.
+
+```env
+OPENAI_API_KEY=your_openai_api_key
+```
+
+The API key is stored only in the backend environment variable and is not exposed to the frontend.
+
+### AI Error Handling
+
+If the OpenAI API quota is unavailable or billing is not active, the backend handles the error gracefully and returns a clear message instead of crashing the application.
+
+This makes the application more reliable during demo or production testing.
+
+
 ## Live Demo
 
 - **Web App:** https://learning-support-platform-4q3x.vercel.app
@@ -72,6 +145,14 @@ The project consists of three main parts:
 - MongoDB database integration
 - Deployed backend and frontend using Vercel
 
+### AI Study Assistant
+
+- Ask questions about learning materials
+- Generate simple explanations using AI
+- Use existing material content as context
+- Display related material sources
+- Handle AI quota or API errors gracefully
+
 ---
 
 ## Tech Stack
@@ -86,6 +167,7 @@ The project consists of three main parts:
 - bcryptjs
 - CORS
 - dotenv
+- OpenAI API
 
 ### Web Frontend
 
@@ -647,6 +729,10 @@ Through this project, I learned how to:
 - Debug CORS issues in production
 - Debug network issues between mobile app and local backend
 - Manage environment variables across local and production environments
+- Integrated an AI-powered study assistant with backend API
+- Used existing learning materials as AI context
+- Learned how to safely call AI API from the backend without exposing API keys on the frontend
+- Implemented AI error handling for quota and API failures
 
 ---
 
@@ -700,6 +786,7 @@ Material Dashboard  : Implemented
 Material Detail     : Implemented
 Progress Tracking   : Implemented
 Deployment          : Implemented
+AI Study Assistant : Implemented
 ```
 
 ---
