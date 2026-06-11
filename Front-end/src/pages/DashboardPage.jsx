@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
@@ -40,8 +40,7 @@ export default function Dashboard() {
   const [progressItems, setProgressItems] = useState([]);
   const [updatingMaterialId, setUpdatingMaterialId] = useState(null);
   const cabinetSectionRef = useRef(null);
-  const [recentlyAddedMaterialId, setRecentlylyAddedMaterialId] =
-    useState(null);
+  const [recentlyAddedMaterialId, setRecentlyAddedMaterialId] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -410,19 +409,17 @@ export default function Dashboard() {
           </section>
         )}
 
-        <section className="dashboard-section">
+        <section className="dashboard-section" ref={cabinetSectionRef}>
           <div className="dashboard-section-header">
-            <div>
-              <span className="eyebrow">My Cabinet</span>
-              <section
-                className="dashboard-section"
-                ref={cabinetSectionRef}
-              ></section>
-              <h2>Your enrolled learning materials</h2>
-              <p>
-                Materials in this section are connected to your personal
-                progress.
-              </p>
+            <div className="dashboard-section-header">
+              <div>
+                <span className="eyebrow">My Cabinet</span>
+                <h2>Your enrolled learning materials</h2>
+                <p>
+                  Materials in this section are connected to your personal
+                  progress.
+                </p>
+              </div>
             </div>
           </div>
 

@@ -3018,6 +3018,10 @@ select:focus {
   }
 }
 
+.dashboard-section {
+  scroll-margin-top: 96px;
+}
+
 .dashboard-toast {
   position: fixed;
   right: 28px;
