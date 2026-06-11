@@ -7,6 +7,7 @@ const materialRoutes = require("./routes/materialRoutes");
 const lessonRoutes = require("./routes/lessons");
 const progressRoutes = require("./routes/progressRoutes");
 const aiRoutes = require("./routes/aiRoutes");
+const connectDB = require("./config/db");
 
 const app = express();
 
@@ -59,6 +60,20 @@ app.get("/api/health", (_req, res) => {
     status: "ok",
     service: "learning-support-platform-api",
   });
+});
+
+app.use(async (_req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("Database connection failed:", err.message);
+
+    return res.status(500).json({
+      msg: "Database connection failed",
+      detail: err.message,
+    });
+  }
 });
 
 app.use("/api/auth", authRoutes);
