@@ -288,7 +288,7 @@ export default function Dashboard() {
                   ? "Updating..."
                   : isCompleted
                     ? "Completed"
-                    : "Mark Done"}
+                    : "Mark as Done"}
               </button>
             ) : (
               <button
