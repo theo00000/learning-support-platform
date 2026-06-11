@@ -1,133 +1,232 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function LandingPage() {
+  useEffect(() => {
+    const revealElements = document.querySelectorAll(
+      [
+        ".lp-badge",
+        ".lp-hero-content h1",
+        ".lp-hero-content p",
+        ".lp-hero-actions",
+        ".lp-trust-row",
+        ".lp-dashboard-mockup",
+        ".lp-floating-card",
+        ".lp-section-heading",
+        ".lp-feature-card",
+        ".lp-overview-card",
+        ".lp-info-main",
+        ".lp-info-card",
+        ".lp-showcase-card",
+        ".lp-workflow-item",
+        ".lp-cta",
+      ].join(", "),
+    );
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.16,
+        rootMargin: "0px 0px -70px 0px",
+      },
+    );
+
+    revealElements.forEach((element, index) => {
+      element.classList.add("lp-scroll-reveal");
+      element.style.setProperty(
+        "--reveal-delay",
+        `${Math.min(index * 35, 260)}ms`,
+      );
+      observer.observe(element);
+    });
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const move = Math.min(scrollY * 0.045, 34);
+      const scale = 1 + Math.min(scrollY * 0.00005, 0.025);
+
+      document.documentElement.style.setProperty(
+        "--lp-parallax-y",
+        `${move}px`,
+      );
+      document.documentElement.style.setProperty(
+        "--lp-parallax-scale",
+        `${scale}`,
+      );
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const features = [
     {
       icon: "📚",
       title: "Structured Materials",
       description:
-        "Access learning materials by subject, difficulty, duration, and study goals in one organized dashboard.",
+        "Students can access learning materials based on subject, difficulty, duration, and study goals.",
     },
     {
       icon: "✅",
       title: "Progress Tracking",
       description:
-        "Mark materials as completed, reset progress, and keep track of your learning journey.",
+        "Each completed material is tracked per student so learning progress can be continued anytime.",
     },
     {
       icon: "✨",
       title: "AI Study Assistant",
       description:
-        "Ask questions and get simple explanations based on available learning materials.",
+        "Students can ask questions and receive simpler explanations based on available learning materials.",
     },
   ];
 
-  const steps = [
+  const workflows = [
     "Create a student account",
-    "Login to your dashboard",
+    "Login to the dashboard",
     "Explore learning materials",
-    "Track progress and ask AI for help",
+    "Track progress and ask AI",
   ];
 
+  const platformDetails = [
+    {
+      label: "For Students",
+      title: "A focused learning dashboard",
+      description:
+        "Students can browse materials, open detailed content, filter by subject, and monitor which materials have been completed.",
+    },
+    {
+      label: "For Learning Flow",
+      title: "Progress-based study experience",
+      description:
+        "The platform helps students continue learning from their progress instead of starting over or losing track of completed materials.",
+    },
+    {
+      label: "For Study Support",
+      title: "AI assistance with material context",
+      description:
+        "The AI Study Assistant uses existing learning material data as context, making answers more relevant to the student’s study content.",
+    },
+  ];
+
+  const currentYear = new Date().getFullYear();
+
   return (
-    <main className="landing-page">
-      <nav className="landing-navbar">
-        <Link to="/" className="landing-brand">
-          <span className="landing-logo">LS</span>
-          <span>Learning Support</span>
+    <main className="lp-page">
+      <nav className="lp-navbar">
+        <Link to="/" className="lp-brand">
+          <span className="lp-brand-logo">LS</span>
+          <span className="lp-brand-text">Learning Support</span>
         </Link>
 
-        <div className="landing-nav-links">
+        <div className="lp-nav-links">
           <a href="#features">Features</a>
+          <a href="#overview">Overview</a>
           <a href="#workflow">Workflow</a>
-          <a href="#tech">Tech Stack</a>
-          <Link to="/login" className="landing-nav-button">
+        </div>
+
+        <div className="lp-nav-actions">
+          <Link to="/login" className="lp-login-link">
             Login
+          </Link>
+          <Link to="/register" className="lp-nav-cta">
+            Get Started
           </Link>
         </div>
       </nav>
 
-      <section className="landing-hero">
-        <div className="landing-hero-content">
-          <div className="landing-badge">Learning Support Platform</div>
+      <section className="lp-hero">
+        <div className="lp-hero-content">
+          <div className="lp-badge">
+            <span>✨</span>
+            Learning Support Platform
+          </div>
 
           <h1>Study smarter with structured materials and AI support.</h1>
 
           <p>
             A fullstack learning platform that helps students access organized
-            materials, track study progress, and ask questions through an AI
-            Study Assistant.
+            learning materials, track study progress, and ask questions through
+            an AI Study Assistant.
           </p>
 
-          <div className="landing-actions">
-            <Link to="/register" className="landing-primary-button">
-              Get Started
+          <div className="lp-hero-actions">
+            <Link to="/register" className="lp-primary-button">
+              Start Learning
             </Link>
 
-            <Link to="/login" className="landing-secondary-button">
-              Login
+            <Link to="/login" className="lp-secondary-button">
+              Login to Dashboard
             </Link>
           </div>
 
-          <div className="landing-mini-stats">
+          <div className="lp-trust-row">
             <div>
-              <strong>JWT</strong>
-              <span>Authentication</span>
+              <strong>Personal</strong>
+              <span>User progress</span>
             </div>
-
             <div>
-              <strong>AI</strong>
-              <span>Study Assistant</span>
+              <strong>Simple</strong>
+              <span>Study dashboard</span>
             </div>
-
             <div>
-              <strong>MongoDB</strong>
-              <span>Progress Data</span>
+              <strong>Helpful</strong>
+              <span>AI explanation</span>
             </div>
           </div>
         </div>
 
-        <div className="landing-preview-wrapper">
-          <div className="landing-preview-card">
-            <div className="preview-header">
+        <div className="lp-hero-visual">
+          <div className="lp-dashboard-mockup">
+            <div className="lp-mockup-top">
               <div>
                 <span>Student Dashboard</span>
-                <h3>Welcome back 👋</h3>
+                <h3>Hi, Student 👋</h3>
               </div>
 
-              <div className="preview-status">Active</div>
+              <div className="lp-status-pill">Active</div>
             </div>
 
-            <div className="preview-progress-card">
-              <div className="preview-progress-text">
+            <div className="lp-progress-card">
+              <div className="lp-progress-text">
                 <span>Learning Progress</span>
                 <strong>72%</strong>
               </div>
-
-              <div className="preview-progress-track">
-                <div className="preview-progress-fill" />
+              <div className="lp-progress-track">
+                <div className="lp-progress-fill" />
               </div>
             </div>
 
-            <div className="preview-material-list">
-              <div className="preview-material-item">
-                <div className="preview-icon">📐</div>
+            <div className="lp-material-list">
+              <div className="lp-material-item">
+                <span>📐</span>
                 <div>
                   <strong>Mathematics</strong>
                   <p>Algebra and equations</p>
                 </div>
               </div>
 
-              <div className="preview-material-item">
-                <div className="preview-icon">🧪</div>
+              <div className="lp-material-item">
+                <span>🧪</span>
                 <div>
                   <strong>Chemistry</strong>
                   <p>Basic chemical reactions</p>
                 </div>
               </div>
 
-              <div className="preview-material-item">
-                <div className="preview-icon">🤖</div>
+              <div className="lp-material-item">
+                <span>🤖</span>
                 <div>
                   <strong>AI Assistant</strong>
                   <p>Explain this material simply</p>
@@ -136,32 +235,32 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="landing-floating-card floating-card-one">
+          <div className="lp-floating-card lp-floating-one">
             <strong>12+</strong>
-            <span>Learning Materials</span>
+            <span>Materials</span>
           </div>
 
-          <div className="landing-floating-card floating-card-two">
+          <div className="lp-floating-card lp-floating-two">
             <strong>Synced</strong>
             <span>User Progress</span>
           </div>
         </div>
       </section>
 
-      <section className="landing-section" id="features">
-        <div className="landing-section-heading">
+      <section className="lp-section" id="features">
+        <div className="lp-section-heading">
           <span>Core Features</span>
           <h2>Everything students need in one learning dashboard.</h2>
           <p>
-            The platform combines learning materials, authentication, progress
-            tracking, and AI assistance in a simple user experience.
+            Learning Support Platform combines material access, authentication,
+            progress tracking, and AI assistance in one simple experience.
           </p>
         </div>
 
-        <div className="landing-feature-grid">
+        <div className="lp-feature-grid">
           {features.map((feature) => (
-            <article className="landing-feature-card" key={feature.title}>
-              <div className="landing-feature-icon">{feature.icon}</div>
+            <article className="lp-feature-card" key={feature.title}>
+              <div className="lp-feature-icon">{feature.icon}</div>
               <h3>{feature.title}</h3>
               <p>{feature.description}</p>
             </article>
@@ -169,62 +268,172 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="landing-section" id="workflow">
-        <div className="landing-workflow-card">
-          <div className="landing-workflow-content">
-            <span>How It Works</span>
-            <h2>Simple flow from login to learning progress.</h2>
+      <section className="lp-overview-section" id="overview">
+        <div className="lp-overview-card">
+          <div className="lp-overview-content">
+            <span>Platform Overview</span>
+            <h2>
+              Built to make study sessions more organized and easier to
+              continue.
+            </h2>
             <p>
-              Students can quickly start learning, continue from their progress,
-              and use AI support when they need extra explanation.
+              Learning Support Platform is designed for students who need a
+              centralized place to access study materials, understand content
+              more easily, and keep track of what they have completed.
             </p>
           </div>
 
-          <div className="landing-workflow-list">
-            {steps.map((step, index) => (
-              <div className="landing-workflow-item" key={step}>
-                <div>{index + 1}</div>
-                <p>{step}</p>
-              </div>
+          <div className="lp-overview-list">
+            {platformDetails.map((item) => (
+              <article className="lp-overview-item" key={item.title}>
+                <span>{item.label}</span>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="landing-section" id="tech">
-        <div className="landing-section-heading">
-          <span>Tech Stack</span>
-          <h2>Built as a fullstack portfolio project.</h2>
-        </div>
+      <section className="lp-info-section">
+        <div className="lp-info-grid">
+          <div className="lp-info-main">
+            <span>Learning Experience</span>
+            <h2>From finding material to finishing progress.</h2>
+            <p>
+              The platform does not only display learning content. It also helps
+              students build a clearer study flow by connecting materials,
+              completion status, and AI explanations into one dashboard.
+            </p>
+          </div>
 
-        <div className="landing-tech-grid">
-          <span>React</span>
-          <span>Vite</span>
-          <span>Express.js</span>
-          <span>MongoDB</span>
-          <span>JWT</span>
-          <span>OpenAI API</span>
-          <span>Vercel</span>
+          <div className="lp-info-card">
+            <strong>01</strong>
+            <h3>Browse</h3>
+            <p>
+              Students search and filter materials based on subject and topic.
+            </p>
+          </div>
+
+          <div className="lp-info-card">
+            <strong>02</strong>
+            <h3>Learn</h3>
+            <p>
+              Students open material details and read structured explanations.
+            </p>
+          </div>
+
+          <div className="lp-info-card">
+            <strong>03</strong>
+            <h3>Complete</h3>
+            <p>
+              Students mark materials as completed to update their progress.
+            </p>
+          </div>
+
+          <div className="lp-info-card">
+            <strong>04</strong>
+            <h3>Ask AI</h3>
+            <p>Students ask questions when they need simpler study guidance.</p>
+          </div>
         </div>
       </section>
 
-      <section className="landing-cta">
-        <h2>Ready to start learning?</h2>
-        <p>
-          Create an account and explore structured learning materials from your
-          personal dashboard.
-        </p>
+      <section className="lp-showcase-section">
+        <div className="lp-showcase-card">
+          <div className="lp-showcase-content">
+            <span>Why It Matters</span>
+            <h2>Designed for students who need simple and focused learning.</h2>
+            <p>
+              Instead of switching between many learning sources, students can
+              use one platform to find materials, continue progress, and ask AI
+              for study help when needed.
+            </p>
+          </div>
 
-        <div className="landing-actions landing-center-actions">
-          <Link to="/register" className="landing-primary-button">
+          <div className="lp-showcase-panel">
+            <div className="lp-panel-item">
+              <span>01</span>
+              <strong>Centralized Materials</strong>
+              <p>Learning content is organized in one accessible dashboard.</p>
+            </div>
+
+            <div className="lp-panel-item">
+              <span>02</span>
+              <strong>User-Based Progress</strong>
+              <p>Each student has their own completed material records.</p>
+            </div>
+
+            <div className="lp-panel-item">
+              <span>03</span>
+              <strong>Contextual AI Support</strong>
+              <p>
+                AI answers are supported by available learning material context.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="lp-section" id="workflow">
+        <div className="lp-section-heading">
+          <span>Workflow</span>
+          <h2>Simple learning flow from account to progress.</h2>
+        </div>
+
+        <div className="lp-workflow-grid">
+          {workflows.map((workflow, index) => (
+            <div className="lp-workflow-item" key={workflow}>
+              <div>{index + 1}</div>
+              <p>{workflow}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="lp-cta">
+        <div>
+          <span>Start Now</span>
+          <h2>Ready to explore the learning dashboard?</h2>
+          <p>
+            Create an account and start learning with structured materials,
+            progress tracking, and AI-powered support.
+          </p>
+        </div>
+
+        <div className="lp-cta-actions">
+          <Link to="/register" className="lp-primary-button lp-white-button">
             Create Account
           </Link>
-
-          <Link to="/login" className="landing-secondary-button">
+          <Link
+            to="/login"
+            className="lp-secondary-button lp-transparent-button"
+          >
             Login
           </Link>
         </div>
       </section>
+
+      <footer className="lp-footer">
+        <div className="lp-footer-content">
+          <div className="lp-footer-brand">
+            <span className="lp-footer-logo">LS</span>
+            <div>
+              <strong>Learning Support Platform</strong>
+              <p>Study smarter, track better, and learn with AI support.</p>
+            </div>
+          </div>
+
+          <div className="lp-footer-info">
+            <p>
+              Built by <strong>Wesly Adam R.</strong>
+            </p>
+            <p>
+              © {currentYear} Learning Support Platform. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
