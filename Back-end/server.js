@@ -1,48 +1,12 @@
-const express = require("express");
-const cors = require("cors");
+require("dotenv").config();
 
-const authRoutes = require("./routes/authRoutes");
-const courseRoutes = require("./routes/courseRoutes");
-const progressRoutes = require("./routes/progressRoutes");
+const app = require("./app");
+const connectDB = require("./config/db");
 
-const app = express();
+const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://learning-support-platform-4q3x.vercel.app",
-];
-
-if (process.env.CLIENT_ORIGIN) {
-  allowedOrigins.push(
-    ...process.env.CLIENT_ORIGIN.split(",").map((origin) => origin.trim()),
-  );
-}
-
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error(`CORS blocked for origin: ${origin}`));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  }),
-);
-
-app.use(express.json());
-
-app.use("/api/auth", authRoutes);
-app.use("/api/courses", courseRoutes);
-app.use("/api/progress", progressRoutes);
-
-app.get("/api/health", (req, res) => {
-  res.json({
-    message: "API is running",
+connectDB().then(() => {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`API server running on http://0.0.0.0:${PORT}`);
   });
 });
-
-module.exports = app;
