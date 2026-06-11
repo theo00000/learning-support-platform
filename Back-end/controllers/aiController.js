@@ -129,7 +129,11 @@ Answer:
       sources,
     });
   } catch (err) {
-    console.error("AI assistant error:", err.message);
+    console.error("AI assistant error:", {
+      name: err.name,
+      message: err.message,
+      stack: err.stack,
+    });
 
     return res.status(500).json({
       msg: "Server error while generating AI answer",
