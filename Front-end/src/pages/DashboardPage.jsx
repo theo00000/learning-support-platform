@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
@@ -39,6 +39,10 @@ export default function Dashboard() {
   const [materials, setMaterials] = useState([]);
   const [progressItems, setProgressItems] = useState([]);
   const [updatingMaterialId, setUpdatingMaterialId] = useState(null);
+  const cabinetSectionRef = useRef(null);
+  const [recentlyAddedMaterialId, setRecentlylyAddedMaterialId] =
+    useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
@@ -201,6 +205,7 @@ export default function Dashboard() {
     try {
       setUpdatingMaterialId(materialId);
       setError("");
+      setSuccessMessage("");
 
       await api.post(`/progress/${materialId}/start`);
 
@@ -208,6 +213,21 @@ export default function Dashboard() {
       setProgressItems(
         Array.isArray(progressResponse.data) ? progressResponse.data : [],
       );
+
+      setRecentlyAddedMaterialId(materialId);
+      setSuccessMessage("Material added to your cabinet ✨");
+
+      window.setTimeout(() => {
+        cabinetSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 120);
+
+      window.setTimeout(() => {
+        setRecentlyAddedMaterialId(null);
+        setSuccessMessage("");
+      }, 2800);
     } catch (err) {
       console.log("START MATERIAL ERROR:", {
         message: err.message,
@@ -237,7 +257,16 @@ export default function Dashboard() {
 
     return (
       <article
-        className={`material-card ${isCompleted ? "material-card-completed" : ""}`}
+        className={[
+          "material-card",
+          isCompleted ? "material-card-completed" : "",
+          isCabinetCard && recentlyAddedMaterialId === material._id
+            ? "material-card-new"
+            : "",
+          !isCabinetCard && isUpdating ? "material-card-adding" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
         key={material._id}
       >
         <div className="card-top">
@@ -288,7 +317,7 @@ export default function Dashboard() {
                   ? "Updating..."
                   : isCompleted
                     ? "Completed"
-                    : "Mark as Done"}
+                    : "Mark Done"}
               </button>
             ) : (
               <button
@@ -360,6 +389,12 @@ export default function Dashboard() {
         </section>
 
         <AIStudyAssistant />
+        {successMessage && (
+          <div className="dashboard-toast">
+            <span>✓</span>
+            <p>{successMessage}</p>
+          </div>
+        )}
 
         {error && (
           <section className="state-card error-state">
@@ -379,6 +414,10 @@ export default function Dashboard() {
           <div className="dashboard-section-header">
             <div>
               <span className="eyebrow">My Cabinet</span>
+              <section
+                className="dashboard-section"
+                ref={cabinetSectionRef}
+              ></section>
               <h2>Your enrolled learning materials</h2>
               <p>
                 Materials in this section are connected to your personal

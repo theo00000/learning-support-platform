@@ -2928,3 +2928,149 @@ select:focus {
     font-size: 0.72rem;
   }
 }
+
+.material-card-new {
+  animation: materialAddedPop 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.material-card-new::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.3),
+    rgba(14, 165, 233, 0.18),
+    rgba(255, 255, 255, 0)
+  );
+  opacity: 0;
+  pointer-events: none;
+  animation: materialAddedGlow 1.6s ease-out both;
+}
+
+@keyframes materialAddedPop {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+    filter: blur(6px);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.015);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes materialAddedGlow {
+  0% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.material-card-adding {
+  transform: scale(0.985);
+  opacity: 0.72;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.material-card-adding .btn-progress {
+  position: relative;
+  overflow: hidden;
+}
+
+.material-card-adding .btn-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: translateX(-120%);
+  animation: addingButtonShine 1.1s ease-in-out infinite;
+}
+
+@keyframes addingButtonShine {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.dashboard-toast {
+  position: fixed;
+  right: 28px;
+  top: 92px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(191, 219, 254, 0.9);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(18px);
+  animation: dashboardToastIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dashboard-toast span {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.dashboard-toast p {
+  margin: 0;
+  color: #102033;
+  font-weight: 900;
+  font-size: 0.92rem;
+}
+
+@keyframes dashboardToastIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.94);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-toast {
+    left: 18px;
+    right: 18px;
+    top: 82px;
+    justify-content: center;
+    border-radius: 22px;
+  }
+}
