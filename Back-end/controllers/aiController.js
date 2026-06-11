@@ -129,11 +129,20 @@ Answer:
       sources,
     });
   } catch (err) {
-    console.error("AI assistant error:", {
-      name: err.name,
-      message: err.message,
-      stack: err.stack,
-    });
+    console.error("AI assistant error:", err.message);
+
+    const isQuotaError =
+      err.message?.toLowerCase().includes("quota") ||
+      err.message?.toLowerCase().includes("rate limit") ||
+      err.message?.toLowerCase().includes("429");
+
+    if (isQuotaError) {
+      return res.status(429).json({
+        msg: "AI quota is currently unavailable. Please try again later.",
+        detail:
+          "The AI assistant is connected, but the current Gemini API quota has been reached or is not active for this project.",
+      });
+    }
 
     return res.status(500).json({
       msg: "Server error while generating AI answer",
