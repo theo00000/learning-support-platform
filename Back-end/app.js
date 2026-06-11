@@ -9,13 +9,15 @@ const materialRoutes = require("./routes/materialRoutes");
 const lessonRoutes = require("./routes/lessons");
 const progressRoutes = require("./routes/progressRoutes");
 const aiRoutes = require("./routes/aiRoutes");
-
-const app = express();
+const progressRoutes = require("./routes/progressRoutes");
 
 const allowedOrigins = (process.env.CLIENT_ORIGIN || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+app.use("/api/progress", progressRoutes);
+const app = express();
 
 app.use(
   cors({

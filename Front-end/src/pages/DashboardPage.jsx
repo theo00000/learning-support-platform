@@ -103,9 +103,9 @@ export default function Dashboard() {
 
         const status = item?.status || "in_progress";
         const progressPercent = clampProgress(
-          item?.progress ||
-            item?.percentage ||
-            (status === "completed" ? 100 : 45),
+          item?.progress ??
+            item?.percentage ??
+            (status === "completed" ? 100 : 10),
         );
 
         return {
@@ -197,6 +197,35 @@ export default function Dashboard() {
     }
   };
 
+  const handleStartMaterial = async (materialId) => {
+    try {
+      setUpdatingMaterialId(materialId);
+      setError("");
+
+      await api.post(`/progress/${materialId}/start`);
+
+      const progressResponse = await api.get("/progress");
+      setProgressItems(
+        Array.isArray(progressResponse.data) ? progressResponse.data : [],
+      );
+    } catch (err) {
+      console.log("START MATERIAL ERROR:", {
+        message: err.message,
+        status: err?.response?.status,
+        data: err?.response?.data,
+      });
+
+      setError(
+        err?.response?.data?.msg ||
+          err?.response?.data?.message ||
+          err.message ||
+          "Failed to add material to cabinet.",
+      );
+    } finally {
+      setUpdatingMaterialId(null);
+    }
+  };
+
   const renderMaterialCard = (material, options = {}) => {
     const isCabinetCard = options.isCabinetCard || false;
     const isCompleted = completedMaterialIds.has(material._id);
@@ -246,20 +275,31 @@ export default function Dashboard() {
           <span>{material.duration} min</span>
 
           <div className="card-actions">
-            <button
-              type="button"
-              className={isCompleted ? "btn btn-completed" : "btn btn-progress"}
-              disabled={isUpdating}
-              onClick={() => handleToggleComplete(material._id)}
-            >
-              {isUpdating
-                ? "Updating..."
-                : isCompleted
-                  ? "Completed"
-                  : isCabinetCard
-                    ? "Mark Done"
-                    : "Add Progress"}
-            </button>
+            {isCabinetCard ? (
+              <button
+                type="button"
+                className={
+                  isCompleted ? "btn btn-completed" : "btn btn-progress"
+                }
+                disabled={isUpdating || isCompleted}
+                onClick={() => handleToggleComplete(material._id)}
+              >
+                {isUpdating
+                  ? "Updating..."
+                  : isCompleted
+                    ? "Completed"
+                    : "Mark Done"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-progress"
+                disabled={isUpdating}
+                onClick={() => handleStartMaterial(material._id)}
+              >
+                {isUpdating ? "Adding..." : "Add to Cabinet"}
+              </button>
+            )}
 
             <Link to={`/materials/${material._id}`} className="btn btn-small">
               {isCabinetCard ? "Continue" : "View"}
@@ -363,8 +403,8 @@ export default function Dashboard() {
             <section className="state-card cabinet-empty-state">
               <h3>Your learning cabinet is still empty</h3>
               <p>
-                Start by exploring available materials below. Once progress is
-                added, your material will appear in this personal cabinet.
+                Start by exploring available materials below. Add materials to
+                your cabinet from the Explore Materials section below.
               </p>
             </section>
           )}
@@ -384,8 +424,8 @@ export default function Dashboard() {
               <span className="eyebrow">Explore Materials</span>
               <h2>Find new materials to study</h2>
               <p>
-                Browse available materials and add progress when you start
-                learning.
+                Browse available materials and add them to your personal
+                learning cabinet.
               </p>
             </div>
           </div>
