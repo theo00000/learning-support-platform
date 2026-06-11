@@ -460,6 +460,21 @@ select:focus {
   min-width: 104px;
 }
 
+.material-card .card-actions .btn {
+  min-height: 42px;
+  padding: 0 18px;
+  font-size: 0.9rem;
+}
+
+.material-card .btn-progress,
+.material-card .btn-completed {
+  min-width: 120px;
+}
+
+.material-card .btn-small {
+  min-width: 96px;
+}
+
 .material-card h3 {
   margin: 1rem 0 0.6rem;
   font-size: 1.25rem;
@@ -469,6 +484,22 @@ select:focus {
   color: #64748b;
   line-height: 1.6;
   margin: 0;
+}
+
+@media (max-width: 640px) {
+  .material-card .card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .material-card .card-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .material-card .card-actions .btn {
+    flex: 1;
+  }
 }
 
 .card-top,
