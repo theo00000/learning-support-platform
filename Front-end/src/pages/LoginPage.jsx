@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 export default function Login() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -30,12 +32,28 @@ export default function Login() {
     }));
   };
 
+  const validateForm = () => {
+    const email = form.email.toLowerCase().trim();
+
+    if (!email || !form.password) {
+      return "Email and password are required.";
+    }
+
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address.";
+    }
+
+    return "";
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
 
-    if (!form.email || !form.password) {
-      setError("Email and password are required.");
+    const validationMessage = validateForm();
+
+    if (validationMessage) {
+      setError(validationMessage);
       return;
     }
 
@@ -43,7 +61,7 @@ export default function Login() {
       setIsSubmitting(true);
 
       await login({
-        email: form.email,
+        email: form.email.toLowerCase().trim(),
         password: form.password,
       });
 
@@ -52,7 +70,7 @@ export default function Login() {
       setError(
         err?.response?.data?.msg ||
           err?.response?.data?.message ||
-          "Login failed. Please check your email and password.",
+          "Invalid email or password.",
       );
     } finally {
       setIsSubmitting(false);
@@ -66,8 +84,8 @@ export default function Login() {
           <span className="eyebrow">Welcome back</span>
           <h1>Continue your learning journey.</h1>
           <p>
-            Access learning materials, organize your study flow, and prepare
-            yourself with structured content.
+            Access your personal learning cabinet, continue materials you have
+            taken, and track your study progress.
           </p>
         </div>
 

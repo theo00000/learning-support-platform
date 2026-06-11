@@ -4,6 +4,33 @@ import { useAuth } from "../context/AuthContext";
 
 const gradeOptions = ["Grade 10", "Grade 11", "Grade 12"];
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const strongPasswordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
+const getPasswordRules = (password) => [
+  {
+    label: "At least 8 characters",
+    isValid: password.length >= 8,
+  },
+  {
+    label: "Uppercase letter",
+    isValid: /[A-Z]/.test(password),
+  },
+  {
+    label: "Lowercase letter",
+    isValid: /[a-z]/.test(password),
+  },
+  {
+    label: "Number",
+    isValid: /\d/.test(password),
+  },
+  {
+    label: "Special character",
+    isValid: /[^A-Za-z0-9]/.test(password),
+  },
+];
+
 export default function Register() {
   const { register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -19,6 +46,8 @@ export default function Register() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const passwordRules = getPasswordRules(form.password);
+
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -33,18 +62,20 @@ export default function Register() {
   };
 
   const validateForm = () => {
-    if (
-      !form.name ||
-      !form.email ||
-      !form.password ||
-      !form.grade ||
-      !form.school
-    ) {
+    const name = form.name.trim();
+    const email = form.email.toLowerCase().trim();
+    const school = form.school.trim();
+
+    if (!name || !email || !form.password || !form.grade || !school) {
       return "All fields are required.";
     }
 
-    if (form.password.length < 6) {
-      return "Password must be at least 6 characters.";
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address.";
+    }
+
+    if (!strongPasswordRegex.test(form.password)) {
+      return "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
     }
 
     return "";
@@ -65,11 +96,11 @@ export default function Register() {
       setIsSubmitting(true);
 
       await register({
-        name: form.name,
-        email: form.email,
+        name: form.name.trim(),
+        email: form.email.toLowerCase().trim(),
         password: form.password,
         grade: form.grade,
-        school: form.school,
+        school: form.school.trim(),
       });
 
       navigate("/dashboard", { replace: true });
@@ -91,8 +122,8 @@ export default function Register() {
           <span className="eyebrow">Start learning</span>
           <h1>Create your student account.</h1>
           <p>
-            Build a structured learning habit with materials organized by
-            subject, difficulty, and study goals.
+            Build a personal learning cabinet, continue your materials, and
+            track your progress with a safer account.
           </p>
         </div>
 
@@ -130,12 +161,25 @@ export default function Register() {
             <input
               name="password"
               type="password"
-              placeholder="Minimum 6 characters"
+              placeholder="Min. 8 chars, Aa, 123, @"
               value={form.password}
               onChange={handleChange}
               autoComplete="new-password"
             />
           </label>
+
+          <div className="password-rules">
+            {passwordRules.map((rule) => (
+              <span
+                key={rule.label}
+                className={
+                  rule.isValid ? "password-rule is-valid" : "password-rule"
+                }
+              >
+                {rule.isValid ? "✓" : "•"} {rule.label}
+              </span>
+            ))}
+          </div>
 
           <label>
             Grade

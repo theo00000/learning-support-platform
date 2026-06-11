@@ -2,6 +2,20 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const strongPasswordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
+const passwordRequirementMessage =
+  "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
+
+const normalizeEmail = (email = "") => String(email).toLowerCase().trim();
+
+const isValidEmail = (email = "") => emailRegex.test(normalizeEmail(email));
+
+const isStrongPassword = (password = "") =>
+  strongPasswordRegex.test(String(password));
+
 const sanitizeUser = (user) => ({
   id: user._id,
   name: user.name,
@@ -35,19 +49,34 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, grade, school } = req.body;
 
-    if (!name || !email || !password || !grade || !school) {
+    const trimmedName = String(name || "").trim();
+    const normalizedEmail = normalizeEmail(email);
+    const trimmedGrade = String(grade || "").trim();
+    const trimmedSchool = String(school || "").trim();
+
+    if (
+      !trimmedName ||
+      !normalizedEmail ||
+      !password ||
+      !trimmedGrade ||
+      !trimmedSchool
+    ) {
       return res.status(400).json({
         msg: "All fields are required",
       });
     }
 
-    if (password.length < 6) {
+    if (!isValidEmail(normalizedEmail)) {
       return res.status(400).json({
-        msg: "Password must be at least 6 characters",
+        msg: "Invalid email format",
       });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    if (!isStrongPassword(password)) {
+      return res.status(400).json({
+        msg: passwordRequirementMessage,
+      });
+    }
 
     const existingUser = await User.findOne({
       email: normalizedEmail,
@@ -59,14 +88,14 @@ exports.register = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await User.create({
-      name: name.trim(),
+      name: trimmedName,
       email: normalizedEmail,
       password: hashedPassword,
-      grade,
-      school: school.trim(),
+      grade: trimmedGrade,
+      school: trimmedSchool,
     });
 
     const token = signToken(user);
@@ -95,18 +124,20 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({
-        msg: "Email and password are required",
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!normalizedEmail || !password || !isValidEmail(normalizedEmail)) {
+      return res.status(401).json({
+        msg: "Invalid email or password",
       });
     }
 
     const user = await User.findOne({
-      email: email.toLowerCase().trim(),
+      email: normalizedEmail,
     }).select("+password");
 
     if (!user) {
-      return res.status(400).json({
+      return res.status(401).json({
         msg: "Invalid email or password",
       });
     }
@@ -114,7 +145,7 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({
+      return res.status(401).json({
         msg: "Invalid email or password",
       });
     }

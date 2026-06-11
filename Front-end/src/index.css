@@ -2696,3 +2696,170 @@ select:focus {
     padding-bottom: 150px;
   }
 }
+
+.password-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: -0.35rem;
+}
+
+.password-rule {
+  width: fit-content;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.password-rule.is-valid {
+  background: #dcfce7;
+  color: #047857;
+  border-color: #bbf7d0;
+}
+
+/* ============================= */
+/* Personal Learning Cabinet */
+/* ============================= */
+
+.dashboard-progress-card {
+  max-width: 520px;
+  margin-top: 1.4rem;
+  padding: 1rem;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.dashboard-progress-text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.dashboard-progress-text span {
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 800;
+}
+
+.dashboard-progress-text strong {
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+.dashboard-progress-track,
+.material-progress-track {
+  height: 11px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(226, 232, 240, 0.9);
+}
+
+.dashboard-progress-fill,
+.material-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563eb, #0ea5e9);
+  transition: width 0.45s ease;
+}
+
+.dashboard-section {
+  margin-top: 2rem;
+}
+
+.dashboard-section-header {
+  margin-bottom: 1rem;
+}
+
+.dashboard-section-header h2 {
+  margin: 0.7rem 0 0;
+  color: #102033;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.dashboard-section-header p {
+  max-width: 680px;
+  margin: 0.8rem 0 0;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+.cabinet-empty-state {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(37, 99, 235, 0.1),
+      transparent 18rem
+    ),
+    #ffffff;
+}
+
+.material-card-completed {
+  border-color: #bbf7d0;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(34, 197, 94, 0.08),
+      transparent 15rem
+    ),
+    rgba(255, 255, 255, 0.95);
+}
+
+.material-progress {
+  margin-top: 1rem;
+  padding: 0.85rem;
+  border-radius: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.material-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.65rem;
+}
+
+.material-progress-header span,
+.material-progress-header strong {
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.material-progress-header span {
+  color: #64748b;
+}
+
+.material-progress-header strong {
+  color: #2563eb;
+}
+
+@media (max-width: 640px) {
+  .dashboard-progress-card {
+    max-width: 100%;
+  }
+
+  .dashboard-section {
+    margin-top: 1.4rem;
+  }
+
+  .dashboard-section-header h2 {
+    font-size: 1.7rem;
+  }
+
+  .password-rules {
+    gap: 0.35rem;
+  }
+
+  .password-rule {
+    font-size: 0.72rem;
+  }
+}
