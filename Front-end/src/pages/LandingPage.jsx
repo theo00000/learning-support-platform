@@ -1,7 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function LandingPage() {
+  const [showBottomNav, setShowBottomNav] = useState(false);
+
+  useEffect(() => {
+    const handleBottomNav = () => {
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      const isNearBottom = scrollTop + windowHeight >= documentHeight - 260;
+
+      setShowBottomNav(isNearBottom);
+    };
+
+    handleBottomNav();
+
+    window.addEventListener("scroll", handleBottomNav, { passive: true });
+    window.addEventListener("resize", handleBottomNav);
+
+    return () => {
+      window.removeEventListener("scroll", handleBottomNav);
+      window.removeEventListener("resize", handleBottomNav);
+    };
+  }, []);
+
   useEffect(() => {
     const revealElements = document.querySelectorAll(
       [
@@ -434,6 +458,18 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      <nav
+        className={`lp-bottom-nav ${showBottomNav ? "is-show" : ""}`}
+        aria-label="Bottom navigation"
+      >
+        <a href="#features">Features</a>
+        <a href="#overview">Overview</a>
+        <a href="#workflow">Workflow</a>
+        <Link to="/login">Login</Link>
+        <Link to="/register" className="lp-bottom-nav-cta">
+          Get Started
+        </Link>
+      </nav>
     </main>
   );
 }
