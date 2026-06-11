@@ -2,22 +2,28 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-const connectDB = require("./config/db");
-
 const authRoutes = require("./routes/authRoutes");
 const materialRoutes = require("./routes/materialRoutes");
 const lessonRoutes = require("./routes/lessons");
 const progressRoutes = require("./routes/progressRoutes");
 const aiRoutes = require("./routes/aiRoutes");
-const progressRoutes = require("./routes/progressRoutes");
 
-const allowedOrigins = (process.env.CLIENT_ORIGIN || "")
+const app = express();
+
+const defaultAllowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://learning-support-platform-4q3x.vercel.app",
+];
+
+const envAllowedOrigins = (process.env.CLIENT_ORIGIN || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-app.use("/api/progress", progressRoutes);
-const app = express();
+const allowedOrigins = [
+  ...new Set([...defaultAllowedOrigins, ...envAllowedOrigins]),
+];
 
 app.use(
   cors({
@@ -34,6 +40,8 @@ app.use(
       return callback(new Error(`CORS blocked for origin: ${origin}`));
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
@@ -51,19 +59,6 @@ app.get("/api/health", (_req, res) => {
     status: "ok",
     service: "learning-support-platform-api",
   });
-});
-
-app.use(async (_req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (err) {
-    console.error("Database connection failed:", err.message);
-    return res.status(500).json({
-      msg: "Database connection failed",
-      detail: err.message,
-    });
-  }
 });
 
 app.use("/api/auth", authRoutes);
