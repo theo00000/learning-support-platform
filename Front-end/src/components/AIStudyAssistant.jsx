@@ -35,17 +35,21 @@ export default function AIStudyAssistant() {
         Array.isArray(response.data.sources) ? response.data.sources : [],
       );
     } catch (err) {
-      console.log("AI ASSISTANT ERROR:", {
+      console.error("AI ASSISTANT ERROR FULL:", err);
+      console.error("AI ASSISTANT ERROR DETAIL:", {
         message: err.message,
         status: err?.response?.status,
         data: err?.response?.data,
+        url: err?.config?.url,
+        method: err?.config?.method,
       });
 
       setError(
-        err?.response?.data?.msg ||
+        err?.response?.data?.detail ||
+          err?.response?.data?.msg ||
           err?.response?.data?.message ||
           err.message ||
-          "Failed to ask AI assistant.",
+          "Failed to generate answer.",
       );
     } finally {
       setIsAsking(false);
