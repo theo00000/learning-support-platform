@@ -228,10 +228,13 @@ export default function Dashboard() {
         setSuccessMessage("");
       }, 2800);
     } catch (err) {
-      console.log("START MATERIAL ERROR:", {
-        message: err.message,
+      console.error("START MATERIAL ERROR FULL:", err);
+      console.error("START MATERIAL ERROR DETAIL:", {
+        message: err?.message,
         status: err?.response?.status,
         data: err?.response?.data,
+        url: err?.config?.url,
+        method: err?.config?.method,
       });
 
       setError(
