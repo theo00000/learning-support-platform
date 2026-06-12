@@ -1,8 +1,8 @@
 # Learning Support Platform
 
-**Learning Support Platform** is a fullstack web learning application designed to help high school students access structured learning materials, track their study progress, and ask questions through an AI-powered study assistant.
+**Learning Support Platform** is a fullstack web application that helps high school students access structured learning materials, track completed materials, and ask questions through an AI Study Assistant.
 
-This project was built as a software engineering portfolio project to practice fullstack development, authentication flow, REST API integration, MongoDB data modeling, deployment, AI API integration, and user-based progress tracking.
+This project was built as a software engineering portfolio project to practice real product development: user authentication, REST API integration, MongoDB data modeling, protected routing, deployment, progress tracking, and backend-based AI integration.
 
 ---
 
@@ -13,24 +13,38 @@ This project was built as a software engineering portfolio project to practice f
 
 ---
 
-## Problem Statement
+## Portfolio Summary
 
-High school students often need a simple and organized way to access learning materials, especially when preparing for exams. Learning resources can be scattered across different platforms, making it harder for students to find the right material based on subject, difficulty, and available study time.
+Many students prepare for exams using scattered notes, files, and websites. This makes it difficult to find the right material, continue learning consistently, and remember which topics have already been completed.
 
-Another common problem is that students often lose track of which materials they have already completed. Without progress tracking, it becomes harder to plan study sessions and continue learning consistently.
+Learning Support Platform solves this by providing one dashboard where students can:
 
-Learning Support Platform was created to solve this problem by providing a centralized learning dashboard where students can access structured materials, search by keyword, filter by subject, open detailed learning content, mark materials as completed, and ask questions using an AI Study Assistant.
+- Register and log in securely
+- Browse structured learning materials
+- Search and filter materials by subject
+- Open material detail pages
+- Mark materials as completed
+- Track completed learning progress
+- Ask questions through an AI Study Assistant
 
 ---
 
-## Project Overview
+## My Role
 
-Learning Support Platform provides students with an accessible platform to register, login, browse learning materials, filter materials by subject, view detailed learning content, track completed materials, and receive AI-generated study explanations based on available learning materials.
+My role in this project was **Fullstack Developer**.
 
-The project consists of two main parts:
+I worked on:
 
-- **Backend API** built with Node.js, Express.js, MongoDB, JWT authentication, and OpenAI API integration
-- **Web Frontend** built with React and Vite
+- Designing the web frontend with React and Vite
+- Building the backend REST API with Express.js
+- Creating MongoDB models using Mongoose
+- Implementing JWT authentication and protected routes
+- Connecting frontend and backend using Axios
+- Building user-based progress tracking
+- Integrating Gemini API through the backend for the AI Study Assistant
+- Deploying the frontend and backend with Vercel
+- Debugging CORS, environment variables, and production API issues
+- Writing portfolio documentation and manual testing notes
 
 ---
 
@@ -41,91 +55,36 @@ The project consists of two main parts:
 - Student registration
 - Student login
 - JWT-based authentication
-- Protected routes
-- Persistent session on the web app
+- Protected dashboard and material routes
+- Persistent session using local storage
 - Logout functionality
 
 ### Learning Materials
 
-- List of learning materials
+- Learning material list
 - Material detail page
-- Search materials by keyword
-- Filter materials by subject
+- Search by keyword
+- Filter by subject
 - Difficulty badge
-- Duration information
+- Estimated duration
 - Related materials by subject
 
 ### Learning Progress
 
 - Mark material as completed
-- Reset completed material progress
+- Reset completed progress
 - View completed material count on dashboard
 - Store progress per authenticated user
 - Track relationship between user and material
 
 ### AI Study Assistant
 
-- Ask questions about learning materials
-- Generate simple AI explanations
-- Use existing learning materials from MongoDB as context
-- Display related material sources
-- Handle AI quota or API errors gracefully
-- Keep the OpenAI API key safely on the backend
-
----
-
-## AI Study Assistant
-
-The **AI Study Assistant** helps students ask questions about available learning materials. When a student submits a question, the frontend sends the request to the backend. The backend validates the user's JWT token, retrieves relevant materials from MongoDB, sends the question and material context to the OpenAI API, and returns an answer with related sources.
-
-This feature is designed to help students understand learning materials more easily through simple explanations, key points, study tips, and relevant material references.
-
-### AI Feature Flow
-
-```mermaid
-flowchart TD
-    A[Student asks a question] --> B[Frontend sends request to Backend]
-    B --> C[Backend validates JWT token]
-    C --> D[Backend searches relevant materials in MongoDB]
-    D --> E[Backend sends question and material context to OpenAI API]
-    E --> F[AI generates study explanation]
-    F --> G[Backend returns answer and related sources]
-    G --> H[Frontend displays AI response]
-```
-
-### AI Route
-
-| Method | Endpoint      | Description                                            |
-| ------ | ------------- | ------------------------------------------------------ |
-| POST   | `/api/ai/ask` | Ask AI Study Assistant using learning material context |
-
-### AI Request Example
-
-```json
-{
-  "question": "Jelaskan materi matematika dengan bahasa sederhana"
-}
-```
-
-### AI Response Example
-
-```json
-{
-  "question": "Jelaskan materi matematika dengan bahasa sederhana",
-  "answer": "Generated explanation from AI...",
-  "sources": [
-    {
-      "id": "material_id",
-      "title": "Material title",
-      "subject": "Matematika"
-    }
-  ]
-}
-```
-
-### AI Error Handling
-
-If the OpenAI API quota is unavailable, billing is not active, or the AI service returns an error, the backend handles the issue gracefully and returns a clear error message instead of crashing the application.
+- Ask questions about available learning materials
+- Generate simple study explanations
+- Use MongoDB learning materials as context
+- Return related material sources
+- Handle AI quota/API errors gracefully
+- Keep the AI API key safely on the backend
 
 ---
 
@@ -135,15 +94,15 @@ If the OpenAI API quota is unavailable, billing is not active, or the AI service
 
 - Node.js
 - Express.js
-- MongoDB
+- MongoDB Atlas
 - Mongoose
 - JSON Web Token
 - bcryptjs
 - CORS
 - dotenv
-- OpenAI API
+- Gemini API
 
-### Web Frontend
+### Frontend
 
 - React
 - Vite
@@ -153,48 +112,9 @@ If the OpenAI API quota is unavailable, billing is not active, or the AI service
 
 ### Deployment
 
-- Vercel for web frontend
+- Vercel for frontend
 - Vercel for backend API
 - MongoDB Atlas for cloud database
-
----
-
-## Project Structure
-
-```txt
-learning-support-platform/
-├── Back-end/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── .env.example
-│   ├── package.json
-│   ├── seed.js
-│   └── server.js
-│
-├── Front-end/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── .env.example
-│   └── package.json
-│
-├── docs/
-│   ├── register.png
-│   ├── dashboard.png
-│   ├── material-detail.png
-│   └── testing documentation
-│
-├── .gitignore
-└── README.md
-```
 
 ---
 
@@ -204,113 +124,54 @@ learning-support-platform/
 flowchart LR
     U[Student]
 
-    subgraph Client Side
-        W[Web App<br/>React + Vite]
+    subgraph Client
+        WEB[React + Vite Web App]
     end
 
-    subgraph Server Side
+    subgraph Backend
         API[Express.js REST API]
-        AUTH[JWT Authentication]
-        ROUTES[Routes / Controllers]
+        AUTH[JWT Middleware]
+        CTRL[Routes and Controllers]
         AI[AI Study Assistant Logic]
-        PROGRESS[Progress Tracking Logic]
         DBLAYER[Mongoose ODM]
     end
 
-    subgraph External Service
-        OPENAI[OpenAI API]
+    subgraph Services
+        GEMINI[Gemini API]
+        MONGO[(MongoDB Atlas)]
     end
 
-    subgraph Database
-        USER[(User Collection)]
-        MATERIAL[(Material Collection)]
-        ENROLLMENT[(Enrollment / Progress Collection)]
-    end
-
-    subgraph Deployment
-        VF[Vercel Frontend]
-        VB[Vercel Backend]
-        MDB[(MongoDB Atlas)]
-    end
-
-    U --> W
-    W --> API
+    U --> WEB
+    WEB --> API
     API --> AUTH
-    API --> ROUTES
-    ROUTES --> PROGRESS
-    ROUTES --> AI
-    AI --> OPENAI
-    ROUTES --> DBLAYER
-    DBLAYER --> USER
-    DBLAYER --> MATERIAL
-    DBLAYER --> ENROLLMENT
-    USER --> MDB
-    MATERIAL --> MDB
-    ENROLLMENT --> MDB
-    W --> VF
-    API --> VB
+    API --> CTRL
+    CTRL --> DBLAYER
+    CTRL --> AI
+    AI --> GEMINI
+    DBLAYER --> MONGO
 ```
-
-The web frontend communicates with the backend through REST API endpoints. Authentication is handled using JWT tokens, which are stored locally on the client side. The backend connects to MongoDB Atlas for user, material, and progress data. The AI Study Assistant uses material data as context before generating a response through the OpenAI API.
 
 ---
 
-## Request Flow
+## AI Study Assistant Flow
 
 ```mermaid
 sequenceDiagram
     participant User
     participant Frontend as React Frontend
-    participant API as Express Backend
+    participant Backend as Express Backend
     participant DB as MongoDB Atlas
-    participant AI as OpenAI API
+    participant AI as Gemini API
 
-    User->>Frontend: Register / Login / Access Materials / Ask AI
-    Frontend->>API: Send HTTP Request with JWT Token
-    API->>API: Validate Token
-    API->>DB: Read / Write Data
-    DB-->>API: Return Query Result
-    alt AI Question
-        API->>AI: Send question and material context
-        AI-->>API: Return generated explanation
-    end
-    API-->>Frontend: Return JSON Response
-    Frontend-->>User: Display Dashboard / Material Detail / Progress / AI Answer
-```
-
----
-
-## Authentication Flow
-
-```mermaid
-flowchart TD
-    A[User Register / Login] --> B[Frontend Form]
-    B --> C[POST /api/auth/register or /api/auth/login]
-    C --> D[Express Backend]
-    D --> E[Validate Input]
-    E --> F[Check / Create User in MongoDB]
-    F --> G[Generate JWT Token]
-    G --> H[Return Token + User Data]
-    H --> I[Frontend Stores Token]
-    I --> J[Access Protected Dashboard and Materials]
-```
-
----
-
-## Learning Progress Flow
-
-```mermaid
-flowchart TD
-    A[Student Opens Dashboard] --> B[Frontend Fetches Materials]
-    B --> C[Frontend Fetches User Progress]
-    C --> D[Dashboard Displays Completed Count]
-    D --> E[Student Clicks Mark Done]
-    E --> F[POST /api/progress/:materialId/complete]
-    F --> G[Backend Validates JWT Token]
-    G --> H[Backend Creates or Updates Progress Record]
-    H --> I[MongoDB Stores User-Material Progress]
-    I --> J[Frontend Refreshes Progress Data]
-    J --> K[Dashboard Updates Completed Status]
+    User->>Frontend: Ask study question
+    Frontend->>Backend: POST /api/ai/ask with JWT
+    Backend->>Backend: Validate token
+    Backend->>DB: Retrieve learning materials
+    DB-->>Backend: Return material context
+    Backend->>AI: Send question + material context
+    AI-->>Backend: Return explanation
+    Backend-->>Frontend: Return answer + sources
+    Frontend-->>User: Display AI answer
 ```
 
 ---
@@ -319,8 +180,8 @@ flowchart TD
 
 ```mermaid
 erDiagram
-    USER ||--o{ ENROLLMENT : tracks
-    MATERIAL ||--o{ ENROLLMENT : belongs_to
+    USER ||--o{ PROGRESS : tracks
+    MATERIAL ||--o{ PROGRESS : belongs_to
 
     USER {
         ObjectId _id
@@ -344,13 +205,56 @@ erDiagram
         string content
     }
 
-    ENROLLMENT {
+    PROGRESS {
         ObjectId _id
         ObjectId user
         ObjectId material
+        number progress
         string status
+        Date startedAt
         Date completedAt
+        Date lastAccessedAt
     }
+```
+
+---
+
+## Project Structure
+
+```txt
+learning-support-platform/
+├── Back-end/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── .env.example
+│   ├── app.js
+│   ├── package.json
+│   ├── seed.js
+│   └── server.js
+│
+├── Front-end/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── .env.example
+│   └── package.json
+│
+├── docs/
+│   ├── case-study.md
+│   ├── testing.md
+│   ├── testing-ai.md
+│   └── screenshots
+│
+├── .gitignore
+└── README.md
 ```
 
 ---
@@ -359,42 +263,34 @@ erDiagram
 
 ### Auth Routes
 
-| Method | Endpoint             | Description                    |
-| ------ | -------------------- | ------------------------------ |
-| POST   | `/api/auth/register` | Register a new student         |
-| POST   | `/api/auth/login`    | Login student                  |
-| GET    | `/api/auth/me`       | Get current authenticated user |
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | `/api/auth/register` | Register a new student |
+| POST | `/api/auth/login` | Login student |
+| GET | `/api/auth/me` | Get current authenticated user |
 
 ### Material Routes
 
-| Method | Endpoint           | Description                |
-| ------ | ------------------ | -------------------------- |
-| GET    | `/api/courses`     | Get all learning materials |
-| GET    | `/api/courses/:id` | Get material detail by ID  |
-
-### Lesson Routes
-
-| Method | Endpoint           | Description       |
-| ------ | ------------------ | ----------------- |
-| GET    | `/api/lessons`     | Get all lessons   |
-| GET    | `/api/lessons/:id` | Get lesson detail |
-| POST   | `/api/lessons`     | Create lesson     |
-| PUT    | `/api/lessons/:id` | Update lesson     |
-| DELETE | `/api/lessons/:id` | Delete lesson     |
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/courses` | Get all learning materials |
+| GET | `/api/courses/:id` | Get material detail by ID |
 
 ### Progress Routes
 
-| Method | Endpoint                             | Description                          |
-| ------ | ------------------------------------ | ------------------------------------ |
-| GET    | `/api/progress`                      | Get current user's learning progress |
-| POST   | `/api/progress/:materialId/complete` | Mark material as completed           |
-| DELETE | `/api/progress/:materialId`          | Reset material progress              |
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/progress` | Get current user's learning progress |
+| POST | `/api/progress/:materialId/start` | Start a material |
+| POST | `/api/progress/:materialId/complete` | Mark material as completed |
+| PATCH | `/api/progress/:materialId` | Update material progress percentage |
+| DELETE | `/api/progress/:materialId` | Reset material progress |
 
 ### AI Routes
 
-| Method | Endpoint      | Description                                            |
-| ------ | ------------- | ------------------------------------------------------ |
-| POST   | `/api/ai/ask` | Ask AI Study Assistant using learning material context |
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | `/api/ai/ask` | Ask AI Study Assistant using material context |
 
 ---
 
@@ -407,126 +303,49 @@ git clone https://github.com/theo00000/learning-support-platform.git
 cd learning-support-platform
 ```
 
----
-
-## Backend Setup
-
-Go to backend folder:
+### 2. Backend Setup
 
 ```bash
 cd Back-end
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Create `.env` file:
-
-```bash
 cp .env.example .env
-```
-
-Fill your `.env` file:
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_random_secret_key
-CLIENT_ORIGIN=http://localhost:5173
-OPENAI_API_KEY=your_openai_api_key
-```
-
-Seed database:
-
-```bash
 npm run seed
-```
-
-Run backend server:
-
-```bash
 npm run dev
 ```
 
-Backend will run on:
+Backend runs on:
 
 ```txt
 http://localhost:5000
 ```
 
-Health check:
+Backend `.env` example:
 
-```txt
-GET http://localhost:5000/api/health
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_random_jwt_secret
+CLIENT_ORIGIN=http://localhost:5173
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-1.5-flash
 ```
 
-Expected response:
-
-```json
-{
-  "status": "ok",
-  "service": "learning-support-platform-api"
-}
-```
-
----
-
-## Web Frontend Setup
-
-Go to frontend folder:
+### 3. Frontend Setup
 
 ```bash
 cd Front-end
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Create `.env` file:
-
-```bash
 cp .env.example .env
-```
-
-Fill your `.env` file:
-
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
-```
-
-Run frontend:
-
-```bash
 npm run dev
 ```
 
-Frontend will run on:
+Frontend runs on:
 
 ```txt
 http://localhost:5173
 ```
 
----
-
-## Environment Variables
-
-### Backend `.env`
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_random_secret_key
-CLIENT_ORIGIN=http://localhost:5173
-OPENAI_API_KEY=your_openai_api_key
-```
-
-### Web Frontend `.env`
+Frontend `.env` example:
 
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
@@ -534,45 +353,22 @@ VITE_API_BASE_URL=http://localhost:5000/api
 
 ---
 
-## Deployment
+## Deployment Notes
 
-### Backend Deployment
-
-The backend is deployed on Vercel.
-
-Required environment variables:
+### Backend Environment Variables
 
 ```env
 MONGO_URI=your_mongodb_atlas_connection_string
-JWT_SECRET=your_random_secret_key
+JWT_SECRET=your_random_jwt_secret
 CLIENT_ORIGIN=https://learning-support-platform-4q3x.vercel.app
-OPENAI_API_KEY=your_openai_api_key
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-1.5-flash
 ```
 
-Backend health check:
-
-```txt
-https://learning-support-platform-six.vercel.app/api/health
-```
-
-### Frontend Deployment
-
-The frontend is deployed on Vercel.
-
-Required environment variable:
+### Frontend Environment Variables
 
 ```env
 VITE_API_BASE_URL=https://learning-support-platform-six.vercel.app/api
-```
-
-### CORS Configuration
-
-The backend uses `CLIENT_ORIGIN` to allow requests from the frontend domain.
-
-Example:
-
-```env
-CLIENT_ORIGIN=http://localhost:5173,https://learning-support-platform-4q3x.vercel.app
 ```
 
 ---
@@ -582,6 +378,10 @@ CLIENT_ORIGIN=http://localhost:5173,https://learning-support-platform-4q3x.verce
 ### Register Page
 
 ![Register Page](docs/register.png)
+
+### Login Page
+
+![Login Page](docs/login.png)
 
 ### Dashboard
 
@@ -595,16 +395,29 @@ CLIENT_ORIGIN=http://localhost:5173,https://learning-support-platform-4q3x.verce
 
 ## Testing Documentation
 
-Testing documentation is stored in the `docs/` folder. The testing documentation covers the main user flows, including authentication, protected routes, dashboard access, material detail page, progress tracking, and AI Study Assistant behavior.
+Manual testing documentation is available in the `docs/` folder:
 
-The AI Study Assistant testing focuses on:
+- [`docs/testing.md`](docs/testing.md)
+- [`docs/testing-ai.md`](docs/testing-ai.md)
+- [`docs/case-study.md`](docs/case-study.md)
 
-- Asking a question from the frontend
-- Sending the question to the backend
-- Validating authenticated access
-- Retrieving relevant material sources
-- Returning an AI-generated answer
-- Handling API quota or service errors gracefully
+The tested flow includes:
+
+```txt
+Register → Login → Dashboard → Search/Filter Materials → Material Detail → Mark Done → Ask AI → Logout
+```
+
+---
+
+## Security Notes
+
+- Real `.env` files are not included in this repository.
+- API keys and database credentials must be configured through local or deployment environment variables.
+- Passwords are hashed using bcryptjs.
+- Protected routes require JWT authentication.
+- The AI API key is stored only on the backend and is not exposed to the frontend.
+
+For production-level improvement, authentication can be strengthened using httpOnly cookies, refresh token rotation, rate limiting, and stronger authorization rules.
 
 ---
 
@@ -612,92 +425,31 @@ The AI Study Assistant testing focuses on:
 
 Through this project, I learned how to:
 
-- Build REST API using Express.js
-- Connect backend with MongoDB using Mongoose
+- Build a fullstack web application
+- Structure backend code using routes, controllers, models, and middleware
 - Implement JWT authentication
-- Hash passwords using bcryptjs
-- Protect API routes with middleware
-- Connect React frontend with backend API
-- Store authentication sessions on the client side
-- Structure a fullstack project more maintainably
-- Build user-based progress tracking with MongoDB relationships
-- Deploy frontend and backend using Vercel
-- Debug CORS issues in production
-- Manage environment variables across local and production environments
-- Integrate an AI-powered study assistant with backend API
-- Use existing learning materials as AI context
-- Safely call AI API from the backend without exposing API keys on the frontend
-- Implement AI error handling for quota and API failures
-
----
-
-## Software Engineering Focus
-
-This project focuses on more than just coding. It also emphasizes:
-
-- Clear folder structure
-- Separation of concerns
-- Route-controller-model backend pattern
-- API-based application flow
-- Authentication and authorization basics
-- Data consistency between frontend, backend, and database
-- User-to-material progress relationship
-- Error handling and loading states
-- Environment variable management
-- Deployment and production debugging
-- Portfolio-ready documentation
+- Hash passwords securely
+- Connect React frontend with Express backend
+- Model user-to-material progress data in MongoDB
+- Integrate an AI API from the backend
+- Handle loading, error, and empty states
+- Deploy frontend and backend separately
+- Debug CORS and environment variable issues
+- Write clearer technical documentation for portfolio presentation
 
 ---
 
 ## Future Improvements
 
-Planned improvements:
-
-- Improve progress visualization with percentage charts
-- Add learning streaks or weekly study summary
+- Add progress percentage visualization
 - Add bookmark or saved materials feature
 - Add admin dashboard for managing materials
 - Add role-based access control
-- Add unit and integration testing
+- Add learning history
+- Add unit and integration tests
 - Add API documentation using Postman or Swagger
-- Improve AI answer formatting
-- Add profile editing feature
-- Add secure token handling improvement for production usage
-
----
-
-## Project Status
-
-This project is currently under active development as a software engineering portfolio project.
-
-Current status:
-
-```txt
-Backend API         : Completed basic version
-Web Frontend        : Completed basic version
-Authentication      : Implemented
-Material Dashboard  : Implemented
-Material Detail     : Implemented
-Progress Tracking   : Implemented
-Deployment          : Implemented
-AI Study Assistant  : Implemented
-```
-
----
-
-## Security Notes
-
-This project uses JWT for authentication. For learning and portfolio purposes, tokens are stored locally on the client side.
-
-The OpenAI API key is stored only in the backend environment variable and is not exposed to the frontend.
-
-For a production-level application, future improvements may include:
-
-- Using httpOnly cookies for web authentication
-- Adding refresh token handling
-- Adding stronger role-based authorization
-- Adding rate limiting for authentication routes
-- Adding rate limiting for AI requests
+- Improve AI response formatting
+- Improve authentication security using httpOnly cookies
 
 ---
 
