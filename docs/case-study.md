@@ -1,27 +1,38 @@
 # Learning Support Platform Case Study
 
+## Overview
+
+Learning Support Platform is a fullstack web application designed to help high school students organize their study materials, track completed materials, and ask questions through an AI Study Assistant.
+
+I built this project as a portfolio project to practice real software engineering fundamentals: identifying a user problem, designing a solution, building a fullstack application, connecting a database, protecting routes, deploying the system, and documenting the development process.
+
+---
+
 ## Problem
 
-High school students often need a simple and organized way to access learning materials, especially when preparing for exams. In many cases, learning resources are scattered across different platforms, notes, files, or websites. This makes it harder for students to quickly find the right material based on subject, difficulty, and available study time.
+High school students often prepare for exams using scattered learning resources such as notes, files, websites, and class materials. This makes it harder to quickly find the right material and continue studying consistently.
 
-Another problem is that students often lose track of which materials they have already completed. Without a progress tracking system, it becomes harder for them to continue learning consistently and plan their next study session.
+Another problem is progress tracking. Students may forget which materials they have already completed, especially when studying multiple subjects.
 
-Learning Support Platform was created to solve these problems by providing a centralized learning dashboard where students can access structured materials, filter by subject, search by keyword, view material details, and track completed learning materials.
+This project focuses on two main questions:
+
+1. How can students access structured learning materials in one place?
+2. How can students track their learning progress more clearly?
 
 ---
 
 ## Target User
 
-The main target users are high school students who are preparing for exams and need a simple platform to manage their study materials.
+The main users are high school students who need a simple learning dashboard for exam preparation.
 
-The user needs include:
+User needs include:
 
-- Accessing learning materials in one place
-- Finding materials based on subject
-- Understanding material difficulty before studying
-- Knowing estimated study duration
-- Tracking which materials have been completed
-- Continuing learning more consistently
+- Access learning materials in one place
+- Find materials based on subject or keyword
+- See difficulty and study duration before opening material
+- Read structured material content
+- Track completed materials
+- Ask simple questions when they need extra explanation
 
 ---
 
@@ -29,107 +40,133 @@ The user needs include:
 
 My role in this project was **Fullstack Developer**.
 
-I worked on the main parts of the system, including:
+I worked on:
 
-- Designing the web frontend using React and Vite
-- Building the backend REST API using Express.js
-- Creating MongoDB models with Mongoose
-- Implementing JWT-based authentication
-- Creating protected routes for authenticated users
-- Building a mobile version using Expo React Native
-- Connecting frontend and mobile apps to the backend API
-- Adding learning progress tracking
-- Deploying the backend and frontend using Vercel
-- Debugging production issues such as CORS, environment variables, and mobile-to-backend connection problems
+- Frontend implementation using React and Vite
+- Backend REST API using Node.js and Express.js
+- MongoDB data modeling using Mongoose
+- JWT authentication and protected route middleware
+- User-based progress tracking
+- AI Study Assistant integration using Gemini API through the backend
+- Frontend-backend integration using Axios
+- Deployment setup for frontend and backend using Vercel
+- Manual testing and portfolio documentation
 
 ---
 
 ## Solution
 
-Learning Support Platform provides a fullstack learning system where students can register, login, browse learning materials, view material details, and mark materials as completed.
+The solution is a web-based learning platform where students can register, log in, browse learning materials, view material details, mark materials as completed, and ask questions through an AI Study Assistant.
 
 The main solution includes:
 
-- **Authentication system**
-  Students can register and login securely using JWT authentication.
+### 1. Authentication System
 
-- **Learning dashboard**
-  Students can view available materials from different subjects.
+Students can create an account and log in. The backend returns a JWT token, which is used to access protected routes.
 
-- **Search and filter feature**
-  Students can search materials by keyword and filter them by subject.
+### 2. Learning Dashboard
 
-- **Material detail page**
-  Students can open each material and read structured learning content.
+The dashboard displays learning materials, subject filters, search input, total materials, completed materials, and estimated study duration.
 
-- **Progress tracking**
-  Students can mark materials as completed, and the system stores progress per authenticated user.
+### 3. Material Detail Page
 
-- **Cross-platform access**
-  The project supports both web and mobile applications.
+Students can open a material to read structured content and view related materials from the same subject.
+
+### 4. Progress Tracking
+
+Students can mark materials as completed. The backend stores progress per authenticated user, so each student has their own progress data.
+
+### 5. AI Study Assistant
+
+Students can ask questions about available learning materials. The backend retrieves material context from MongoDB, sends the question and context to Gemini API, and returns an answer with related material sources.
 
 ---
 
 ## Architecture
 
-The project uses a fullstack architecture with separate backend, web frontend, and mobile app folders.
-
 ```txt
-User
- ├── Web App: React + Vite
- └── Mobile App: Expo React Native
-          |
-          v
+Student
+  |
+  v
+React + Vite Web App
+  |
+  v
 Express.js REST API
-          |
-          ├── JWT Authentication
-          ├── Routes and Controllers
-          ├── Progress Tracking Logic
-          └── Mongoose ODM
-          |
-          v
+  |
+  |-- JWT Authentication Middleware
+  |-- Auth Controller
+  |-- Material Controller
+  |-- Progress Controller
+  |-- AI Controller
+  |
+  v
 MongoDB Atlas
+
+External AI Service:
+Express Backend -> Gemini API
 ```
 
-The main data relationship for progress tracking is:
+The main data relationship is:
 
 ```txt
-User → Enrollment / Progress → Material
+User -> Progress -> Material
 ```
 
-This relationship allows each student to have their own progress data for each learning material.
+This structure allows each student to have their own completed materials and learning progress.
 
-The system is deployed using:
+---
 
-- **Vercel** for the web frontend
-- **Vercel** for the backend API
-- **MongoDB Atlas** for the cloud database
+## Key Technical Decisions
+
+### JWT for Authentication
+
+JWT was used because it is simple to implement for a portfolio project and works well with protected API routes.
+
+### Separate Frontend and Backend
+
+The frontend and backend are separated to practice real API-based application architecture.
+
+### MongoDB for Flexible Learning Materials
+
+MongoDB was used because learning material data can contain flexible fields such as topics, content, difficulty, subject, and duration.
+
+### Backend-Based AI Integration
+
+The AI API is called only from the backend so the API key is not exposed to the frontend.
 
 ---
 
 ## Challenges
 
-During development, I faced several challenges:
+### 1. CORS in Production
 
-### 1. Connecting mobile app to local backend
+When the frontend and backend were deployed separately, the browser blocked requests because the backend had not allowed the frontend domain.
 
-The mobile app could not use `localhost` directly because the mobile device and laptop have different network contexts. I learned how to use the laptop IP address for physical device testing and `10.0.2.2` for Android Emulator.
+**Solution:** I configured allowed origins using the `CLIENT_ORIGIN` environment variable.
 
-### 2. Handling CORS in production
+### 2. Environment Variable Management
 
-After deploying the frontend and backend to Vercel, the frontend was blocked by CORS because the backend did not allow the frontend domain. I fixed this by configuring `CLIENT_ORIGIN` in the backend environment variables.
+The project needs different environment variables for local development and deployment.
 
-### 3. Managing environment variables
+**Solution:** I created `.env.example` files and configured real values only in local/deployment environments.
 
-The project uses different environment variables for local development and production. I learned how to manage `.env` files locally and environment variables in Vercel.
+### 3. User-Based Progress Tracking
 
-### 4. Keeping data consistent across backend and frontend
+Progress tracking required a clear relationship between users and materials.
 
-Some fields needed to stay consistent between backend models, frontend forms, and mobile screens. I learned the importance of naming consistency, especially for user data, material data, and progress data.
+**Solution:** I created a `Progress` model that connects `user` and `material`, then stores status, progress percentage, and timestamps.
 
-### 5. Implementing user-based progress tracking
+### 4. AI Context Handling
 
-Progress tracking required a new data relationship between users and materials. I implemented an Enrollment model to store each user's completed material status.
+The AI assistant should not answer without context from the platform.
+
+**Solution:** The backend retrieves available materials from MongoDB and sends them as context before generating an answer.
+
+### 5. Error Handling
+
+AI services may fail because of quota, billing, or API errors.
+
+**Solution:** I added backend error handling so the application returns a readable message instead of crashing.
 
 ---
 
@@ -137,45 +174,41 @@ Progress tracking required a new data relationship between users and materials. 
 
 Through this project, I learned how to:
 
-- Build a fullstack web application
-- Build REST API using Express.js
-- Connect backend with MongoDB using Mongoose
-- Implement JWT authentication
+- Build a fullstack web application from idea to deployment
+- Create REST API routes with Express.js
+- Design MongoDB models using Mongoose
+- Implement authentication using JWT
 - Protect API routes using middleware
 - Connect React frontend with backend API
-- Build a mobile app using Expo React Native
-- Store authentication sessions on web and mobile
-- Design user-based progress tracking
-- Deploy frontend and backend using Vercel
-- Debug CORS issues in production
-- Debug mobile-to-backend network issues
-- Manage environment variables in local and production environments
-- Structure a project for better maintainability
+- Store user-specific progress data
+- Debug frontend-backend integration problems
+- Handle CORS and environment variables in production
+- Integrate an AI API safely from the backend
+- Write documentation that explains both product thinking and technical decisions
 
-This project also helped me understand that software engineering is not only about writing code, but also about solving problems, designing clear system structure, debugging real issues, and improving user experience.
+This project helped me understand that software development is not only about writing code. It also requires understanding user problems, making technical decisions, testing flows, documenting the system, and improving the product step by step.
 
 ---
 
 ## Future Improvements
 
-There are several improvements that can be added in the future:
+Possible future improvements:
 
-- Add progress percentage visualization
-- Add bookmark or saved materials feature
-- Add admin dashboard for managing learning materials
-- Add role-based access control for admin and student users
-- Add user profile editing
-- Add learning history
-- Add unit and integration testing
+- Add progress percentage charts
+- Add bookmarks or saved materials
+- Add learning streaks
+- Add admin dashboard for managing materials
+- Add role-based access control
+- Add unit and integration tests
 - Add API documentation using Postman or Swagger
-- Improve mobile UI and animations
-- Improve authentication security using httpOnly cookies or secure token storage
-- Add better error handling and empty states
+- Improve AI answer formatting
+- Improve authentication security using httpOnly cookies
+- Add profile editing feature
 
 ---
 
 ## Summary
 
-Learning Support Platform is a fullstack web and mobile learning application built to help students access structured learning materials and track their study progress.
+Learning Support Platform is a fullstack web application that helps students access structured materials, track learning progress, and ask questions through an AI Study Assistant.
 
-This project represents my learning journey in software engineering, especially in building a product from problem identification, system design, backend API development, frontend implementation, mobile development, deployment, and production debugging.
+This project represents my learning journey in building a practical software product that combines frontend development, backend API design, database modeling, authentication, deployment, and AI integration.

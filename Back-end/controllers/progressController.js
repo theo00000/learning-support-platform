@@ -1,47 +1,6 @@
 const mongoose = require("mongoose");
 const Progress = require("../models/Progress");
 
-exports.startMaterial = async (req, res) => {
-  try {
-    const { materialId } = req.params;
-
-    const progress = await Progress.findOneAndUpdate(
-      {
-        user: req.user.id,
-        material: materialId,
-      },
-      {
-        $setOnInsert: {
-          user: req.user.id,
-          material: materialId,
-          progress: 10,
-          status: "in_progress",
-          startedAt: new Date(),
-        },
-        $set: {
-          lastAccessedAt: new Date(),
-        },
-      },
-      {
-        new: true,
-        upsert: true,
-        setDefaultsOnInsert: true,
-      },
-    ).populate("material");
-
-    return res.status(201).json({
-      msg: "Material added to cabinet",
-      progress,
-    });
-  } catch (err) {
-    console.error("Start material error:", err.message);
-
-    return res.status(500).json({
-      msg: "Server error while adding material to cabinet",
-    });
-  }
-};
-
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const sanitizeProgressNumber = (value) => {

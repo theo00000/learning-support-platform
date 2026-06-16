@@ -1,128 +1,85 @@
-# AI Study Assistant Testing
+# AI Study Assistant Testing Documentation
 
-This section documents manual testing for the AI Study Assistant feature in Learning Support Platform.
-
----
-
-## AI Testing Summary
-
-| Feature                                  | Status                             |
-| ---------------------------------------- | ---------------------------------- |
-| AI component displayed on dashboard      | Passed                             |
-| AI route protected by authentication     | Passed                             |
-| AI request sent from frontend to backend | Passed                             |
-| Backend validates JWT token              | Passed                             |
-| Backend connects to OpenAI API           | Passed                             |
-| AI quota error handled gracefully        | Passed                             |
-| AI response displayed on frontend        | Pending quota/billing availability |
+This document contains manual testing notes for the AI Study Assistant feature in the Learning Support Platform.
 
 ---
 
-## AI Test Cases
+## Feature Goal
 
-### 1. AI Assistant Component Display
+The AI Study Assistant helps students ask questions about available learning materials and receive simple study explanations.
+
+The backend retrieves learning material context from MongoDB, sends the context and student question to Gemini API, and returns an answer with related material sources.
+
+---
+
+## Testing Environment
+
+- Frontend: React + Vite
+- Backend: Express.js REST API
+- Database: MongoDB Atlas
+- AI Service: Gemini API
+- Authentication: JWT protected route
+- Deployment: Vercel
+
+---
+
+## AI Flow Tested
+
+```txt
+Login -> Dashboard -> Ask AI -> Backend validates JWT -> Backend retrieves material context -> Backend calls Gemini API -> Frontend displays answer or error message
+```
+
+---
+
+## Test Summary
+
+| Test Item                       | Expected Result                                         | Status |
+| ------------------------------- | ------------------------------------------------------- | ------ |
+| AI form is visible on dashboard | Student can see AI Study Assistant section              | Passed |
+| Empty question validation       | Frontend asks user to write a question first            | Passed |
+| Protected AI endpoint           | Backend rejects requests without valid JWT              | Passed |
+| Material context retrieval      | Backend retrieves learning materials from MongoDB       | Passed |
+| Gemini API integration          | Backend sends question and context to Gemini API        | Passed |
+| Source display                  | Frontend displays related materials returned by backend | Passed |
+| API error handling              | Frontend displays readable error message                | Passed |
+
+---
+
+## Test Cases
+
+### 1. Empty Question Validation
+
+| Item            | Description                                         |
+| --------------- | --------------------------------------------------- |
+| Scenario        | Student clicks Ask AI without typing a question     |
+| Expected Result | Frontend displays validation message                |
+| Actual Result   | Frontend displayed `Please write a question first.` |
+| Status          | Passed                                              |
+
+---
+
+### 2. Ask AI with Valid Question
+
+| Item            | Description                                                                                  |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| Scenario        | Student asks a question from the dashboard                                                   |
+| Input           | `Jelaskan materi matematika dengan bahasa sederhana`                                         |
+| Expected Result | Backend validates token, retrieves material context, calls Gemini API, and returns an answer |
+| Actual Result   | Backend processed the request and returned an AI response when API quota was available       |
+| Status          | Passed                                                                                       |
+
+---
+
+### 3. Protected Endpoint Validation
 
 | Item            | Description                                        |
 | --------------- | -------------------------------------------------- |
-| Feature         | AI Study Assistant UI                              |
-| Scenario        | Authenticated user opens the dashboard             |
-| Input           | Valid authenticated session                        |
-| Expected Result | AI Study Assistant card appears on dashboard       |
-| Actual Result   | AI Study Assistant card was displayed successfully |
+| Scenario        | Request is sent to `/api/ai/ask` without JWT token |
+| Expected Result | Backend rejects the request                        |
+| Actual Result   | Backend returned authentication error              |
 | Status          | Passed                                             |
 
----
-
-### 2. Protected AI Route
-
-| Item            | Description                                        |
-| --------------- | -------------------------------------------------- |
-| Feature         | Protected AI Endpoint                              |
-| Scenario        | User accesses AI endpoint without token            |
-| Input           | Request without Authorization header               |
-| Expected Result | Backend rejects request and returns token error    |
-| Actual Result   | Backend returned `Authorization token is required` |
-| Status          | Passed                                             |
-
----
-
-### 3. AI Request from Frontend
-
-| Item            | Description                                          |
-| --------------- | ---------------------------------------------------- |
-| Feature         | Ask AI                                               |
-| Scenario        | Authenticated user submits a question from dashboard |
-| Input           | `Jelaskan materi matematika dengan bahasa sederhana` |
-| Expected Result | Frontend sends request to `/api/ai/ask`              |
-| Actual Result   | Request was sent successfully to backend             |
-| Status          | Passed                                               |
-
----
-
-### 4. Backend AI Integration
-
-| Item            | Description                                                              |
-| --------------- | ------------------------------------------------------------------------ |
-| Feature         | Backend AI Controller                                                    |
-| Scenario        | Backend processes AI request                                             |
-| Input           | Student question and JWT token                                           |
-| Expected Result | Backend validates token, searches material context, and calls OpenAI API |
-| Actual Result   | Backend successfully reached OpenAI API                                  |
-| Status          | Passed                                                                   |
-
----
-
-### 5. OpenAI Quota Handling
-
-| Item            | Description                                                                 |
-| --------------- | --------------------------------------------------------------------------- |
-| Feature         | AI Error Handling                                                           |
-| Scenario        | OpenAI API quota or billing is unavailable                                  |
-| Input           | Valid AI request                                                            |
-| Expected Result | Backend returns a clear quota error message                                 |
-| Actual Result   | Backend returned `insufficient_quota` from OpenAI API and handled the error |
-| Status          | Passed                                                                      |
-
----
-
-### 6. AI Response Display
-
-| Item            | Description                                             |
-| --------------- | ------------------------------------------------------- |
-| Feature         | AI Answer Display                                       |
-| Scenario        | User asks a question when OpenAI quota is available     |
-| Input           | Valid question                                          |
-| Expected Result | AI answer and related material sources are displayed    |
-| Actual Result   | Pending because OpenAI API quota/billing must be active |
-| Status          | Pending                                                 |
-
----
-
-## AI Testing Notes
-
-The AI Study Assistant endpoint requires authentication.
-
-Required header:
-
-```txt
-Authorization: Bearer <token>
-```
-
-Endpoint:
-
-```txt
-POST /api/ai/ask
-```
-
-Request body:
-
-```json
-{
-  "question": "Jelaskan materi matematika dengan bahasa sederhana"
-}
-```
-
-If the request does not include a valid JWT token, the backend returns:
+Expected response:
 
 ```json
 {
@@ -130,53 +87,63 @@ If the request does not include a valid JWT token, the backend returns:
 }
 ```
 
-This behavior is expected because the AI route is protected.
-
 ---
 
-## OpenAI API Quota Note
+### 4. Related Material Sources
 
-During testing, the backend successfully connected to the OpenAI API, but the OpenAI response returned:
+| Item            | Description                                               |
+| --------------- | --------------------------------------------------------- |
+| Scenario        | AI answer is generated using available learning materials |
+| Expected Result | Backend returns related material sources                  |
+| Actual Result   | Frontend displayed source title and subject               |
+| Status          | Passed                                                    |
 
-```txt
-insufficient_quota
+Example response structure:
+
+```json
+{
+  "answer": "Generated study explanation...",
+  "sources": [
+    {
+      "id": "material_id",
+      "title": "Material title",
+      "subject": "Matematika"
+    }
+  ]
+}
 ```
 
-This means the integration is technically connected, but the OpenAI project requires active billing or available API quota before generating responses.
+---
 
-The application handles this condition gracefully so the user receives a clear error message instead of a broken page.
+### 5. AI API Error Handling
+
+| Item            | Description                                                     |
+| --------------- | --------------------------------------------------------------- |
+| Scenario        | Gemini API quota, billing, or service error occurs              |
+| Expected Result | Backend returns readable error message and frontend displays it |
+| Actual Result   | Application handled the error without crashing                  |
+| Status          | Passed                                                          |
+
+Example error response:
+
+```json
+{
+  "msg": "AI quota is currently unavailable. Please try again later.",
+  "detail": "The AI assistant is connected, but the current Gemini API quota has been reached or is not active for this project."
+}
+```
 
 ---
 
-## Updated Production Testing Checklist
+## Security Notes
 
-| Test Item                    | Expected Result                   | Status                       |
-| ---------------------------- | --------------------------------- | ---------------------------- |
-| Web app opens successfully   | Homepage/Login page is displayed  | Passed                       |
-| Backend health check works   | API returns status `ok`           | Needs recheck after redeploy |
-| Register works in production | New account can be created        | Needs recheck after redeploy |
-| Login works in production    | User can login successfully       | Needs recheck after redeploy |
-| Dashboard loads materials    | Materials are displayed           | Passed locally               |
-| Progress tracking works      | Completed status is saved         | Passed locally               |
-| AI Assistant appears         | AI card is displayed on dashboard | Passed locally               |
-| AI protected route works     | Request without token is rejected | Passed                       |
-| AI backend integration works | Backend reaches OpenAI API        | Passed                       |
-| AI response generation works | AI returns answer                 | Pending quota/billing        |
-| Material detail page works   | Detail content is displayed       | Passed locally               |
-| Logout works                 | User session is cleared           | Passed locally               |
+- The Gemini API key is stored only in backend environment variables.
+- The frontend never receives the API key.
+- The AI route requires JWT authentication.
+- The backend controls the prompt and material context before calling the AI service.
 
 ---
 
 ## Conclusion
 
-The AI Study Assistant feature has been integrated into the Learning Support Platform and tested locally.
-
-The feature is technically connected to the backend and OpenAI API. However, AI response generation requires active OpenAI API quota or billing.
-
-The tested AI flow includes:
-
-```txt
-Login → Dashboard → Ask AI → Backend validates token → Backend calls OpenAI API → Handle response or quota error
-```
-
-Based on this testing, the AI feature is ready for portfolio documentation and can be fully demonstrated once OpenAI API quota is available.
+The AI Study Assistant feature has been integrated and manually tested. The feature supports authenticated AI questions, material-context retrieval, source display, and error handling for API failures.
