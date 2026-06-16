@@ -81,17 +81,19 @@ exports.startMaterial = async (req, res) => {
 exports.updateMaterialProgress = async (req, res) => {
   try {
     const { materialId } = req.params;
-    const progress = sanitizeProgressNumber(req.body.progress);
+    const { progress } = req.body;
 
-    if (!isValidObjectId(materialId)) {
+    const progressNumber = Number(progress);
+
+    if (Number.isNaN(progressNumber)) {
       return res.status(400).json({
-        msg: "Invalid material id",
+        msg: "Progress must be a number",
       });
     }
 
-    const status = progress >= 100 ? "completed" : "in_progress";
+    const safeProgress = Math.min(Math.max(progressNumber, 0), 100);
 
-    const progressItem = await Progress.findOneAndUpdate(
+    const updatedProgress = await Progress.findOneAndUpdate(
       {
         user: req.user.id,
         material: materialId,
@@ -99,27 +101,23 @@ exports.updateMaterialProgress = async (req, res) => {
       {
         user: req.user.id,
         material: materialId,
-        progress,
-        status,
-        completedAt: status === "completed" ? new Date() : null,
-        lastAccessedAt: new Date(),
+        progress: safeProgress,
+        status: safeProgress >= 100 ? "completed" : "in_progress",
+        completedAt: safeProgress >= 100 ? new Date() : null,
       },
       {
         new: true,
         upsert: true,
-        setDefaultsOnInsert: true,
       },
     ).populate("material");
 
-    return res.json({
-      msg: "Progress updated",
-      progress: progressItem,
-    });
+    return res.json(updatedProgress);
   } catch (err) {
-    console.error("Update progress error:", err.message);
+    console.error("UPDATE PROGRESS ERROR:", err.message);
 
     return res.status(500).json({
-      msg: "Server error while updating progress",
+      msg: "Failed to update progress",
+      detail: err.message,
     });
   }
 };

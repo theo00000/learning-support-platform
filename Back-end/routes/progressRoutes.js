@@ -4,6 +4,7 @@ const {
   startMaterial,
   completeMaterial,
   removeProgress,
+  updateMaterialProgress,
 } = require("../controllers/progressController");
 
 const authMiddleware = require("../middleware/auth");
